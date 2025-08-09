@@ -20,14 +20,12 @@
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; }
     /* Toolbar */
     .toolbar { display:flex; gap:12px; align-items:center; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--card); margin-top:12px; flex-wrap:wrap; }
-    .toolbar .search { flex:0 0 200px; } /* smaller search */
+    .toolbar .search { flex:0 0 200px; }
     .toolbar input[type="text"] { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
     .toolbar .tabs-wrap { display:flex; flex-direction:column; gap:6px; flex:1 1 auto; min-width:280px; }
     .tabs { display:flex; gap:6px; flex-wrap:wrap; }
-    .tab { padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:var(--card); cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; }
-    .tab .ico { font-size:16px; line-height:1; }
+    .tab { padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:var(--card); cursor:pointer; font-weight:600; }
     .tab.active { background:var(--brand); border-color:var(--brand); color:white; }
-    .tab.active .ico { filter: brightness(2); }
     .tabs-sub .tab { padding:6px 10px; font-weight:600; opacity:.95; }
     .toolbar .btn { padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); cursor:pointer; }
     /* Layout: list + chart */
@@ -82,7 +80,7 @@
       <div id="ticker-host"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div>
     </div>
 
-    <!-- Toolbar: smaller search + tabs with icons -->
+    <!-- Toolbar: smaller search + tabs (text only) -->
     <div class="toolbar" id="assetToolbar">
       <div class="search"><input id="searchTop" type="text" placeholder="Search (e.g., SOLUSDT, VT, EURCHF)"/></div>
       <div class="tabs-wrap">
@@ -283,23 +281,13 @@
   const newListBtn = document.getElementById('newListBtn');
   const searchTop  = document.getElementById('searchTop');
 
-  const ICONS = {
-    favorites: '★',
-    mylists: '🗂️',
-    equities: '📈',
-    crypto: '🪙',
-    etfs: '📦',
-    fx: '💱',
-    commodities: '⛏️'
-  };
-
   function renderAssetTabs(){
     const order = ['favorites','mylists','equities','crypto','etfs','fx','commodities'];
     assetTabs.innerHTML='';
     order.forEach(id=>{
       if(!CATALOG[id]) return;
       const tab=document.createElement('div'); tab.className='tab'+(store.asset===id?' active':'');
-      tab.innerHTML = '<span class="ico">'+(ICONS[id]||'•')+'</span>' + CATALOG[id].label;
+      tab.textContent = CATALOG[id].label;
       tab.addEventListener('click',()=>{
         store.asset=id; localStorage.setItem('asset', id);
         const firstGroupKey = Object.keys(CATALOG[id].groups)[0] || null;
@@ -497,7 +485,7 @@
   setInterval(pollAlerts, Math.max(10, store.pollSec)*1000);
 
   // ====== Toast helper ======
-  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color:'#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
+  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color='#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
 </script>
 <script>
   // Advanced chart loader (ensures DOM is ready)
