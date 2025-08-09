@@ -1,38 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
-  <defs>
-    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f3f4f6"/>
-      <stop offset="18%" stop-color="#ffffff"/>
-      <stop offset="35%" stop-color="#d1d5db"/>
-      <stop offset="60%" stop-color="#6b7280"/>
-      <stop offset="85%" stop-color="#a1a1aa"/>
-      <stop offset="100%" stop-color="#e5e7eb"/>
-    </linearGradient>
-    <linearGradient id="shine" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-    </linearGradient>
-    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.25"/>
-    </filter>
-    <style>
-      @font-face {
-        font-family: 'GPTSans';
-        src: local('Segoe UI'), local('Arial'), local('Helvetica'), local('Poppins'), local('Inter');
-      }
-    </style>
-  </defs>
-
   <rect width="256" height="256" fill="none"/>
-  <g filter="url(#shadow)">
-    <text id="gptText" x="50%" y="52%" text-anchor="middle" dominant-baseline="middle"
-          font-family="GPTSans, Segoe UI, Arial, Helvetica, sans-serif"
-          font-weight="900" font-size="128" letter-spacing="-6"
-          fill="url(#chrome)" stroke="#d1d5db" stroke-width="2">GPT</text>
-  </g>
-  <clipPath id="textClip">
-    <use href="#gptText"/>
-  </clipPath>
-  <rect x="16" y="16" width="224" height="96" fill="url(#shine)" clip-path="url(#textClip)"/>
+  <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle"
+        font-family="Segoe UI, Arial, Helvetica, sans-serif"
+        font-weight="900" font-size="128" letter-spacing="-6"
+        fill="#e5e7eb" stroke="#cbd5e1" stroke-width="2">GPT</text>
 </svg>
