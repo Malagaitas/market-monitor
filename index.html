@@ -1,45 +1,58 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Markets — S&P 500 & Crypto (Pro)</title>
+  <title>Markets — S&P 500 & Crypto (Range Control)</title>
   <style>
-    :root { --brand:#0f62fe; --bg:#fafafa; --card:#ffffff; --text:#111; --muted:#666; --border:#e5e7eb; }
-    [data-theme="dark"] { --brand:#3b82f6; --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#9ca3af; --border:#1f2937; }
-    html,body { height:100%; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
-    header { padding: 10px 14px; background: var(--brand); color: white; display:flex; gap:12px; align-items:center; justify-content:space-between; }
-    header .title { font-weight:700; }
+    :root {
+      --brand:#0f62fe;
+      --bg:#fafafa;
+      --card:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --border:#e5e5e5;
+    }
+    [data-theme="dark"] {
+      --bg:#0b0f17;
+      --card:#111827;
+      --text:#f5f7fb;
+      --muted:#b6c0d1;
+      --border:#24324a;
+    }
+    html, body { height:100%; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
+    header { padding: 10px 14px; background: var(--brand); color: white; }
     main { padding: 16px; max-width: 1200px; margin: 0 auto; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
     .section { margin-top: 16px; }
     .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
-    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; color:var(--text); }
+    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
     .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-    input[type="search"] { padding:6px 10px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); }
-    .badges { display:flex; flex-wrap:wrap; gap:8px; }
-    .badge { border:1px solid var(--border); background:var(--card); border-radius:999px; padding:6px 10px; font-size:12px; }
-    .badge.up { border-color:#16a34a; }
-    .badge.down { border-color:#ef4444; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
     footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
-    a { color: inherit; text-decoration: none; }
+    .right { display:flex; align-items:center; gap:8px; }
+    .toggle { display:inline-flex; align-items:center; gap:6px; }
   </style>
 </head>
 <body>
   <header>
-    <div class="title">Markets — S&P 500 & Crypto</div>
-    <div style="display:flex; gap:8px; align-items:center;">
-      <input id="search" type="search" placeholder="Search symbol or name…" aria-label="Search" />
-      <button id="themeBtn" class="btn" title="Toggle theme">🌙</button>
+    <div class="row">
+      <h1>Markets — S&P 500 & Crypto</h1>
+      <div class="right">
+        <span class="pill" id="count-pill">25 symbols</span>
+        <label class="toggle">
+          <input id="themeToggle" type="checkbox" /> Dark
+        </label>
+      </div>
     </div>
   </header>
   <main>
     <div class="section card">
       <!-- Ticker Tape -->
       <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget" id="ticker-host"></div>
-        <script id="ticker-script" type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
 {
   "symbols": [
     {
@@ -116,69 +129,32 @@
     <div class="section card">
       <div class="controls">
         <span style="font-weight:700;">History:</span>
-        <button class="btn" data-range="60M">5Y</button>
-        <button class="btn active" data-range="120M">10Y</button>
+        <button class="btn active" data-range="60M">5Y</button>
+        <button class="btn" data-range="120M">10Y</button>
         <button class="btn" data-range="all">ALL</button>
-      </div>
-      <div class="controls">
-        <span style="font-weight:700;">Change (24h):</span>
-        <div id="badges" class="badges" aria-live="polite"></div>
       </div>
       <div id="overview-host"></div>
       <p style="margin-top:8px;color:var(--muted)">Tip: Click any symbol to open an interactive chart on TradingView. If a symbol has less history than selected, the maximum available is shown.</p>
     </div>
   </main>
-  <footer>Built for you — theme, search, and % change included.</footer>
+  <footer>Built for you — range controls included.</footer>
 
   <script>
-    // Data
-    const TABS_ORIG = [{"title": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "Microsoft"}, {"s": "NASDAQ:AAPL", "d": "Apple"}, {"s": "NASDAQ:AMZN", "d": "Amazon"}, {"s": "NASDAQ:META", "d": "Meta"}, {"s": "NASDAQ:AVGO", "d": "Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "Alphabet C"}, {"s": "NYSE:BRK.B", "d": "Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "Tesla"}, {"s": "NYSE:JPM", "d": "JPMorgan"}, {"s": "NYSE:WMT", "d": "Walmart"}, {"s": "NYSE:LLY", "d": "Eli Lilly"}, {"s": "NYSE:V", "d": "Visa"}, {"s": "NYSE:ORCL", "d": "Oracle"}, {"s": "NYSE:MA", "d": "Mastercard"}, {"s": "NASDAQ:NFLX", "d": "Netflix"}, {"s": "NYSE:XOM", "d": "ExxonMobil"}, {"s": "NASDAQ:COST", "d": "Costco"}, {"s": "NYSE:JNJ", "d": "Johnson & Johnson"}]}, {"title": "Crypto Top Vol", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNB"}, {"s": "BINANCE:SOLUSDT", "d": "Solana"}, {"s": "KRAKEN:USDTUSD", "d": "Tether (USD)"}]}];
-    const STOCKS = [{"tv": "NASDAQ:NVDA", "y": "NVDA", "name": "NVIDIA"}, {"tv": "NASDAQ:MSFT", "y": "MSFT", "name": "Microsoft"}, {"tv": "NASDAQ:AAPL", "y": "AAPL", "name": "Apple"}, {"tv": "NASDAQ:AMZN", "y": "AMZN", "name": "Amazon"}, {"tv": "NASDAQ:META", "y": "META", "name": "Meta"}, {"tv": "NASDAQ:AVGO", "y": "AVGO", "name": "Broadcom"}, {"tv": "NASDAQ:GOOGL", "y": "GOOGL", "name": "Alphabet A"}, {"tv": "NASDAQ:GOOG", "y": "GOOG", "name": "Alphabet C"}, {"tv": "NYSE:BRK.B", "y": "BRK.B", "name": "Berkshire B"}, {"tv": "NASDAQ:TSLA", "y": "TSLA", "name": "Tesla"}, {"tv": "NYSE:JPM", "y": "JPM", "name": "JPMorgan"}, {"tv": "NYSE:WMT", "y": "WMT", "name": "Walmart"}, {"tv": "NYSE:LLY", "y": "LLY", "name": "Eli Lilly"}, {"tv": "NYSE:V", "y": "V", "name": "Visa"}, {"tv": "NYSE:ORCL", "y": "ORCL", "name": "Oracle"}, {"tv": "NYSE:MA", "y": "MA", "name": "Mastercard"}, {"tv": "NASDAQ:NFLX", "y": "NFLX", "name": "Netflix"}, {"tv": "NYSE:XOM", "y": "XOM", "name": "ExxonMobil"}, {"tv": "NASDAQ:COST", "y": "COST", "name": "Costco"}, {"tv": "NYSE:JNJ", "y": "JNJ", "name": "Johnson & Johnson"}];
-    const CRYPTOS = [{"tv": "BINANCE:BTCUSDT", "cg": "bitcoin", "name": "Bitcoin"}, {"tv": "BINANCE:ETHUSDT", "cg": "ethereum", "name": "Ethereum"}, {"tv": "BINANCE:BNBUSDT", "cg": "binancecoin", "name": "BNB"}, {"tv": "BINANCE:SOLUSDT", "cg": "solana", "name": "Solana"}, {"tv": "KRAKEN:USDTUSD", "cg": "tether", "name": "Tether (USD)"}];
+    // Data for tabs
+    const TABS_DEFAULT = [{"title": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "Microsoft"}, {"s": "NASDAQ:AAPL", "d": "Apple"}, {"s": "NASDAQ:AMZN", "d": "Amazon"}, {"s": "NASDAQ:META", "d": "Meta"}, {"s": "NASDAQ:AVGO", "d": "Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "Alphabet C"}, {"s": "NYSE:BRK.B", "d": "Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "Tesla"}, {"s": "NYSE:JPM", "d": "JPMorgan"}, {"s": "NYSE:WMT", "d": "Walmart"}, {"s": "NYSE:LLY", "d": "Eli Lilly"}, {"s": "NYSE:V", "d": "Visa"}, {"s": "NYSE:ORCL", "d": "Oracle"}, {"s": "NYSE:MA", "d": "Mastercard"}, {"s": "NASDAQ:NFLX", "d": "Netflix"}, {"s": "NYSE:XOM", "d": "ExxonMobil"}, {"s": "NASDAQ:COST", "d": "Costco"}, {"s": "NYSE:JNJ", "d": "Johnson & Johnson"}]}, {"title": "Crypto Top Vol", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNB"}, {"s": "BINANCE:SOLUSDT", "d": "Solana"}, {"s": "KRAKEN:USDTUSD", "d": "Tether (USD)"}]}];
 
-    // THEME
-    const themeBtn = document.getElementById('themeBtn');
-    function applyTheme(t) {
-      document.documentElement.setAttribute('data-theme', t);
-      themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
-      reloadWidgets(); // rebuild widgets with correct colorTheme
-      localStorage.setItem('theme', t);
-    }
-    themeBtn.addEventListener('click', () => {
-      const cur = document.documentElement.getAttribute('data-theme') || 'light';
-      applyTheme(cur === 'light' ? 'dark' : 'light');
-    });
-    // init theme
-    applyTheme(localStorage.getItem('theme') || 'light');
+    const host = document.getElementById('overview-host');
+    const buttons = Array.from(document.querySelectorAll('.btn[data-range]'));
 
-    // SEARCH
-    const search = document.getElementById('search');
-    search.addEventListener('input', () => reloadWidgets());
-    function filterTabs() {
-      const q = (search.value || '').trim().toLowerCase();
-      if (!q) return JSON.parse(JSON.stringify(TABS_ORIG));
-      const tabs = JSON.parse(JSON.stringify(TABS_ORIG));
-      for (const tab of tabs) {
-        tab.symbols = tab.symbols.filter(it => it.s.toLowerCase().includes(q) || it.d.toLowerCase().includes(q));
-      }
-      return tabs;
-    }
-
-    // WIDGETS
-    function reloadWidgets() {
-      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-      const tabs = filterTabs();
-
-      // Rebuild Market Overview
-      const host = document.getElementById('overview-host');
+    function loadOverview(range) {
       host.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
       script.async = true;
       const cfg = {
-        colorTheme: theme,
-        dateRange: document.querySelector('.btn.active')?.dataset.range || '120M',
+        colorTheme: 'light',
+        dateRange: range,
         showChart: true,
         locale: 'en',
         largeChartUrl: '',
@@ -187,110 +163,27 @@
         showFloatingTooltip: true,
         width: '100%',
         height: '660',
-        tabs
+        tabs: TABS_DEFAULT
       };
       script.innerHTML = JSON.stringify(cfg, null, 2);
       host.querySelector('.tradingview-widget-container').appendChild(script);
-
-      // Rebuild Ticker Tape
-      const tapeHost = document.getElementById('ticker-host');
-      // Remove previous script element
-      const oldScript = document.getElementById('ticker-script');
-      if (oldScript) oldScript.remove();
-      const tapeScript = document.createElement('script');
-      tapeScript.id = 'ticker-script';
-      tapeScript.type = 'text/javascript';
-      tapeScript.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-      tapeScript.async = true;
-      const allSymbols = [].concat(
-        tabs[0]?.symbols?.slice(0,10).map(x => ({ proName: x.s, title: x.d })) || [],
-        tabs[1]?.symbols?.map(x => ({ proName: x.s, title: x.d })) || []
-      );
-      const tapeCfg = {
-        symbols: allSymbols,
-        showSymbolLogo: true,
-        isTransparent: false,
-        displayMode: 'adaptive',
-        colorTheme: theme,
-        locale: 'en'
-      };
-      tapeScript.innerHTML = JSON.stringify(tapeCfg, null, 2);
-      tapeHost.parentElement.appendChild(tapeScript);
-
-      // Refresh badges
-      refreshBadges();
     }
 
-    // RANGE BUTTONS
-    const rangeBtns = Array.from(document.querySelectorAll('.btn[data-range]'));
-    rangeBtns.forEach(btn => btn.addEventListener('click', () => {
-      rangeBtns.forEach(b => b.classList.remove('active'));
+    // Range
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      reloadWidgets();
+      loadOverview(btn.dataset.range);
     }));
 
-    // % CHANGE BADGES
-    async function refreshBadges() {
-      const wrap = document.getElementById('badges');
-      wrap.innerHTML = 'Loading…';
-      try {
-        // Yahoo Finance for stocks
-        const ymap = (s) => s.replace('BRK.B','BRK-B');
-        const ySymbols = STOCKS.map(s => ymap(s.y)).join(',');
-        const yUrl = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols=' + encodeURIComponent(ySymbols);
-        const yRes = await fetch(yUrl);
-        let stockChanges = {}
-        if (yRes.ok) {
-          const yData = await yRes.json();
-          (yData.quoteResponse.result || []).forEach(q => {
-            stockChanges[q.symbol.replace('BRK-B','BRK.B')] = q.regularMarketChangePercent;
-          });
-        }
-        // CoinGecko for crypto
-        const cgIds = CRYPTOS.map(c => c.cg).join(',');
-        const cgUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=' + encodeURIComponent(cgIds) + '&vs_currencies=usd&include_24hr_change=true';
-        const cgRes = await fetch(cgUrl);
-        let cryptoChanges = {}
-        if (cgRes.ok) {
-          const cgData = await cgRes.json();
-          Object.keys(cgData).forEach(id => cryptoChanges[id] = cgData[id].usd_24h_change);
-        }
+    // Theme
+    document.getElementById('themeToggle').addEventListener('change', (e) => {
+      document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
+      loadOverview('120M');
+    });
 
-        // Build badges (filtered with search)
-        const q = (document.getElementById('search').value || '').trim().toLowerCase();
-        const items = [];
-        STOCKS.forEach(s => {
-          if (q && !(s.y.toLowerCase().includes(q) || s.name.toLowerCase().includes(q))) return;
-          const pct = stockChanges[s.y] ?? null;
-          if (pct === null || pct === undefined) return;
-          items.push({ key: s.y, label: s.name + ' ('+s.y+')', pct, type:'stock' });
-        });
-        CRYPTOS.forEach(c => {
-          if (q && !(c.cg.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))) return;
-          const pct = cryptoChanges[c.cg] ?? null;
-          if (pct === null || pct === undefined) return;
-          items.push({ key: c.cg, label: c.name, pct, type:'crypto' });
-        });
-
-        // Render
-        items.sort((a,b)=> a.label.localeCompare(b.label));
-        wrap.innerHTML = '';
-        if (items.length === 0) wrap.textContent = 'No matches.';
-        items.forEach(it => {
-          const b = document.createElement('span');
-          const cls = it.pct >= 0 ? 'badge up' : 'badge down';
-          b.className = cls;
-          const sign = it.pct >= 0 ? '+' : '';
-          b.textContent = `${it.label}  ${sign}${it.pct.toFixed(2)}%`;
-          wrap.appendChild(b);
-        });
-      } catch (e) {
-        wrap.textContent = 'Change data unavailable.';
-      }
-    }
-
-    // INITIAL
-    reloadWidgets();
+    // Initial load
+    loadOverview('60M');
   </script>
 </body>
 </html>
