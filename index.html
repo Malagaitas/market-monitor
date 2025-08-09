@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — more crypto, custom watchlists, price alerts, collapsible columns and advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
@@ -19,22 +18,18 @@
     .badge { position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:11px; font-weight:800; padding:2px 6px; border-radius:999px; }
     main { max-width:1500px; margin:0 auto; padding:16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; }
-    .layout { display:grid; grid-template-columns:260px 360px 1fr; gap:16px; align-items:start; transition:grid-template-columns 200ms ease; }
-    .layout.sidebar-collapsed { grid-template-columns:0 360px 1fr; }
-    .layout.list-collapsed { grid-template-columns:260px 1fr; }
-    .layout.sidebar-collapsed.list-collapsed { grid-template-columns:1fr; }
-    .sidebar { background:var(--sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:hidden; }
+    /* NEW: Horizontal toolbar */
+    .toolbar { display:flex; gap:10px; align-items:center; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--card); margin-top:12px; }
+    .toolbar .search { flex:1; }
+    .toolbar input[type="text"] { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
+    .toolbar select, .toolbar button, .toolbar .btn { padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); cursor:pointer; }
+    .toolbar .muted { color:var(--muted); font-size:12px; }
+    /* 2-column layout only (list + chart) */
+    .layout { display:grid; grid-template-columns:360px 1fr; gap:16px; align-items:start; margin-top:16px; }
+    .layout.list-collapsed { grid-template-columns:1fr; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
-    .panel-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .panel-title { margin:0; font-size:14px; font-weight:800; opacity:.9; }
-    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
-    .nav-group { margin-top:10px; }
-    .group-title { font-weight:800; margin:8px 0 6px; font-size:13px; text-transform:uppercase; opacity:.8; }
-    .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; position:relative; }
-    .nav-item.active { background:var(--brand); border-color:var(--brand); color:white; }
-    .nav-item .edit { position:absolute; right:8px; top:6px; font-size:12px; opacity:.7; cursor:pointer; }
     .list-header { display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--border); justify-content:space-between; }
-    .search input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
+    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
     .row:hover { background: rgba(15, 98, 254, .08); }
     .left { display:flex; flex-direction:column; gap:3px; }
@@ -46,13 +41,8 @@
     .star { font-size:18px; margin-left:8px; user-select:none; }
     .bell { font-size:18px; margin-left:8px; user-select:none; }
     .plus { font-size:20px; margin-left:8px; user-select:none; }
-    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
-    #assetsShowFloating { left: 8px; display:none; }
-    #listShowFloating { right: 8px; display:none; }
-    @media (max-width: 1080px) {
-      .layout { grid-template-columns:1fr; }
-      .layout.sidebar-collapsed, .layout.list-collapsed, .layout.sidebar-collapsed.list-collapsed { grid-template-columns:1fr; }
-    }
+    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); right:8px; display:none; }
+    @media (max-width: 1080px) { .layout { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -66,7 +56,7 @@
       <div id="helpPopover" class="card" style="position:absolute; right:16px; top:52px; display:none; width:360px;">
         <h4 style="margin:6px 0 10px;">Quick tips</h4>
         <ul style="margin:0 0 6px 18px;">
-          <li>Use <b>☰</b> to hide/show columns.</li>
+          <li>Use <b>☰</b> to hide/show the left list.</li>
           <li>Search finds symbols across all categories.</li>
           <li>Click a symbol to load it; <b>★</b> for favorites.</li>
           <li><b>＋</b> adds to your custom watchlists (My Lists).</li>
@@ -82,36 +72,34 @@
   </header>
 
   <main>
+    <!-- Ticker -->
     <div class="card" style="margin-top:16px">
       <div id="ticker-host"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div>
     </div>
 
-    <div id="gridLayout" class="layout" style="margin-top:16px">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="panel-header">
-          <h3 class="panel-title">Asset classes</h3>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <button id="assetsToggleInside" class="icon-btn" title="Hide assets">☰</button>
-            <span id="newListLink" class="muted" style="cursor:pointer;">+ New list</span>
-          </div>
-        </div>
-        <div id="sidebar"></div>
-      </aside>
+    <!-- NEW toolbar (search + asset/group) -->
+    <div class="toolbar" id="assetToolbar">
+      <div class="search" style="min-width:260px;"><input id="searchTop" type="text" placeholder="Search symbols (e.g., SOLUSDT, VT, EURCHF)"/></div>
+      <div class="muted">Asset:</div>
+      <select id="assetSelect"></select>
+      <div class="muted">Group:</div>
+      <select id="groupSelect"></select>
+      <button id="newListBtn" class="btn" style="display:none;">+ New list</button>
+    </div>
 
-      <!-- List -->
+    <div id="gridLayout" class="layout">
+      <!-- List (left) -->
       <section class="list">
         <div class="list-header">
           <div class="controls"><strong id="listTitle">Symbols</strong><span class="muted" id="countPill" style="margin-left:8px;">0</span></div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SOLUSDT, VT, EURCHF)"/></div>
             <button id="listToggle" class="icon-btn" title="Hide list">☰</button>
           </div>
         </div>
         <div id="symbolList"></div>
       </section>
 
-      <!-- Chart -->
+      <!-- Chart (right) -->
       <section class="card">
         <div class="controls" style="justify-content:space-between; align-items:center; margin-bottom:8px;">
           <div class="controls">
@@ -137,10 +125,7 @@
       </section>
     </div>
 
-    <button id="assetsShowFloating" class="floating-btn" title="Show assets">☰</button>
     <button id="listShowFloating" class="floating-btn" title="Show list">☰</button>
-
-    <div id="firstToast" class="card" style="position:fixed; left:50%; transform:translateX(-50%); bottom:18px; display:none; padding:10px 14px; border-radius:999px;">Tip: use ☰ to hide/show panels. <button id="toastOk" class="btn" style="margin-left:8px;">Got it</button></div>
   </main>
 
   <!-- Settings Modal -->
@@ -241,7 +226,6 @@
 
   const store = {
     theme: localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'),
-    sidebarCollapsed: localStorage.getItem('sidebarCollapsed')==='true',
     listCollapsed: localStorage.getItem('listCollapsed')==='true',
     favorites: safeJSON(localStorage.getItem('favorites')) || [],
     mylists: safeJSON(localStorage.getItem('mylists')) || {}, // {id:{label, symbols:[]}}
@@ -273,9 +257,9 @@
   updateTheme();
   themeBtn.addEventListener('click', ()=>{ store.theme = store.theme==='light'?'dark':'light'; localStorage.setItem('theme', store.theme); document.documentElement.setAttribute('data-theme', store.theme); updateTheme(); renderTicker(); renderAdvanced(); });
 
-  function togglePopover(btn, pop) { let open=false; btn.addEventListener('click',(e)=>{ e.stopPropagation(); open=!open; pop.style.display=open?'block':'none'; if(pop.id==='alertsPopover') renderAlertsList(); }); document.addEventListener('click',(e)=>{ if(open && !pop.contains(e.target) && e.target!==btn) { open=false; pop.style.display='none'; } }); }
-  togglePopover(document.getElementById('helpBtn'), document.getElementById('helpPopover'));
-  togglePopover(document.getElementById('alertsBtn'), document.getElementById('alertsPopover'));
+  // Popovers
+  function togglePopover(btnId, popId){ const btn=document.getElementById(btnId), pop=document.getElementById(popId); let open=false; btn.addEventListener('click',(e)=>{ e.stopPropagation(); open=!open; pop.style.display=open?'block':'none'; if(popId==='alertsPopover') renderAlertsList(); }); document.addEventListener('click',(e)=>{ if(open && !pop.contains(e.target) && e.target!==btn){ open=false; pop.style.display='none'; } }); }
+  togglePopover('helpBtn','helpPopover'); togglePopover('alertsBtn','alertsPopover');
 
   // ====== Ticker ======
   function renderTicker() {
@@ -289,74 +273,71 @@
   }
   renderTicker();
 
-  // ====== Layout & toggles ======
-  const gridLayout = document.getElementById('gridLayout');
-  const assetsToggleInside = document.getElementById('assetsToggleInside');
-  const assetsShowFloating = document.getElementById('assetsShowFloating');
-  const listToggle = document.getElementById('listToggle');
-  const listShowFloating = document.getElementById('listShowFloating');
+  // ====== Toolbar (asset/group/search) ======
+  const assetSelect = document.getElementById('assetSelect');
+  const groupSelect = document.getElementById('groupSelect');
+  const newListBtn  = document.getElementById('newListBtn');
+  const searchTop   = document.getElementById('searchTop');
 
-  function applyLayout() {
-    gridLayout.classList.toggle('sidebar-collapsed', store.sidebarCollapsed);
-    gridLayout.classList.toggle('list-collapsed', store.listCollapsed);
-    assetsShowFloating.style.display = store.sidebarCollapsed ? 'block' : 'none';
-    listShowFloating.style.display   = store.listCollapsed   ? 'block' : 'none';
-    assetsToggleInside.title = store.sidebarCollapsed ? 'Show assets' : 'Hide assets';
-    listToggle.title         = store.listCollapsed   ? 'Show list'   : 'Hide list';
+  function refreshToolbarOptions(){
+    // Assets
+    assetSelect.innerHTML = '';
+    Object.entries(CATALOG).forEach(([id, meta])=>{
+      const opt = document.createElement('option'); opt.value=id; opt.textContent=meta.label; assetSelect.appendChild(opt);
+    });
+    assetSelect.value = store.asset;
+    // Groups
+    refreshGroupOptions();
+    // New list button
+    newListBtn.style.display = assetSelect.value==='mylists' ? 'inline-block' : 'none';
   }
-  applyLayout();
+  function refreshGroupOptions(){
+    groupSelect.innerHTML = '';
+    const groups = CATALOG[assetSelect.value]?.groups || {};
+    Object.entries(groups).forEach(([gid, g])=>{
+      const opt = document.createElement('option'); opt.value=gid; opt.textContent=g.label; groupSelect.appendChild(opt);
+    });
+    if(groups[store.group]) groupSelect.value = store.group; else groupSelect.selectedIndex = 0;
+  }
+  refreshToolbarOptions();
 
-  assetsToggleInside.addEventListener('click', ()=>{ store.sidebarCollapsed=!store.sidebarCollapsed; localStorage.setItem('sidebarCollapsed', store.sidebarCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
-  assetsShowFloating.addEventListener('click', ()=>{ store.sidebarCollapsed=false; localStorage.setItem('sidebarCollapsed','false'); applyLayout(); setTimeout(renderAdvanced,60); });
-  listToggle.addEventListener('click', ()=>{ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
-  listShowFloating.addEventListener('click', ()=>{ store.listCollapsed=false; localStorage.setItem('listCollapsed','false'); applyLayout(); setTimeout(renderAdvanced,60); });
-
-  // ====== Sidebar build (with My Lists) ======
-  const sidebar = document.getElementById('sidebar');
-  const newListLink = document.getElementById('newListLink');
-  function uid(){ return Math.random().toString(36).slice(2,9); }
-  function persistLists(){ localStorage.setItem('mylists', JSON.stringify(store.mylists)); }
-  function rebuildCatalog(){ CATALOG = buildCatalog(); ALL_SYMBOLS = flattenAllSymbols(); }
-  function persistAG(){ localStorage.setItem('asset', store.asset); localStorage.setItem('group', store.group); }
-
-  newListLink.addEventListener('click', ()=>{
+  assetSelect.addEventListener('change', ()=>{
+    store.asset = assetSelect.value; localStorage.setItem('asset', store.asset);
+    refreshGroupOptions();
+    store.group = groupSelect.value; localStorage.setItem('group', store.group);
+    newListBtn.style.display = store.asset==='mylists' ? 'inline-block' : 'none';
+    renderList();
+  });
+  groupSelect.addEventListener('change', ()=>{
+    store.group = groupSelect.value; localStorage.setItem('group', store.group);
+    renderList();
+  });
+  newListBtn.addEventListener('click', ()=>{
     const name = prompt('New list name:'); if(!name) return;
-    const id=uid(); store.mylists[id]={label:name, symbols:[]}; persistLists(); rebuildCatalog(); renderSidebar();
-    store.asset='mylists'; store.group=id; persistAG(); renderList();
+    const id = Math.random().toString(36).slice(2,9);
+    store.mylists[id] = { label: name, symbols: [] };
+    localStorage.setItem('mylists', JSON.stringify(store.mylists));
+    CATALOG = buildCatalog(); refreshToolbarOptions(); renderList();
   });
 
-  function renderSidebar(){
-    sidebar.innerHTML='';
-    Object.entries(CATALOG).forEach(([assetId, asset])=>{
-      const block=document.createElement('div'); block.className='nav-group';
-      const t=document.createElement('div'); t.className='group-title'; t.textContent=asset.label; block.appendChild(t);
-      Object.entries(asset.groups).forEach(([groupId,g])=>{
-        const btn=document.createElement('div'); btn.className='nav-item'+((assetId===store.asset && groupId===store.group)?' active':'');
-        btn.textContent=g.label;
-        if(assetId==='mylists'){
-          const edit=document.createElement('span'); edit.className='edit'; edit.textContent='⋮'; edit.title='Edit';
-          edit.addEventListener('click',(e)=>{
-            e.stopPropagation();
-            const act=prompt('Type: rename | delete','rename'); if(!act) return;
-            if(act==='rename'){ const nn=prompt('New name:', g.label); if(!nn) return; store.mylists[groupId].label=nn; persistLists(); rebuildCatalog(); renderSidebar(); }
-            else if(act==='delete'){ if(confirm('Delete this list?')){ delete store.mylists[groupId]; persistLists(); rebuildCatalog(); renderSidebar();
-              if(store.asset==='mylists' && store.group===groupId){ store.asset='crypto'; store.group='top_volume'; persistAG(); renderList(); }
-            } }
-          });
-          btn.appendChild(edit);
-        }
-        btn.addEventListener('click',()=>{ store.asset=assetId; store.group=groupId; persistAG(); renderSidebar(); renderList(); });
-        block.appendChild(btn);
-      });
-      sidebar.appendChild(block);
-    });
+  // ====== Layout (list collapse) ======
+  const gridLayout = document.getElementById('gridLayout');
+  const listToggle = document.getElementById('listToggle');
+  const listShowFloating = document.getElementById('listShowFloating');
+  function applyLayout(){
+    gridLayout.classList.toggle('list-collapsed', store.listCollapsed);
+    listShowFloating.style.display = store.listCollapsed ? 'block' : 'none';
+    listToggle.title = store.listCollapsed ? 'Show list' : 'Hide list';
   }
-  renderSidebar();
+  applyLayout();
+  listToggle.addEventListener('click', ()=>{ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
+  listShowFloating.addEventListener('click', ()=>{ store.listCollapsed=false; localStorage.setItem('listCollapsed', 'false'); applyLayout(); setTimeout(renderAdvanced,60); });
 
   // ====== List + search ======
-  const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList'); const searchInput=document.getElementById('search');
-  function flattenAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d}))); }); const seen=new Set(); return arr.filter(x=> seen.has(x.s)?false:(seen.add(x.s),true)); }
-  let ALL_SYMBOLS = flattenAllSymbols();
+  const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList');
+  function flattenAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.append?0:0)); }); return arr; } // placeholder to avoid accidental replace
+  function getAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d}))); }); const seen=new Set(); return arr.filter(x=> seen.has(x.s)?false:(seen.add(x.s),true)); }
+  let ALL_SYMBOLS = getAllSymbols();
 
   function getGroupSymbols(){ if(store.asset==='favorites') return store.favorites; if(store.asset==='mylists') return (store.mylists[store.group]?.symbols)||[]; return CATALOG[store.asset].groups[store.group].symbols; }
   function getGlobalResults(q){ const qq=q.toLowerCase(); return ALL_SYMBOLS.filter(x=>x.s.toLowerCase().includes(qq)||(x.d||'').toLowerCase().includes(qq)); }
@@ -365,15 +346,16 @@
 
   function addToMyList(obj){
     const keys=Object.keys(store.mylists); let target=keys[0];
-    if(keys.length===0){ const name=prompt('Create a new list name:'); if(!name) return; const id=uid(); store.mylists[id]={label:name, symbols:[]}; target=id; }
+    if(keys.length===0){ const name=prompt('Create a new list name:'); if(!name) return; const id=Math.random().toString(36).slice(2,9); store.mylists[id]={label:name, symbols:[]}; target=id; }
     else { const names=keys.map(k=>store.mylists[k].label); const choice=prompt('Add to which list?\n'+names.map((n,i)=>(i+1)+'. '+n).join('\n'),'1'); if(!choice) return; const idx=parseInt(choice,10)-1; if(isNaN(idx)||idx<0||idx>=keys.length) return; target=keys[idx]; }
     const arr=store.mylists[target].symbols; if(!arr.some(x=>x.s===obj.s)) arr.push(obj);
-    persistLists(); rebuildCatalog(); renderSidebar(); if(store.asset==='mylists'&&store.group===target) renderList();
-    toast('Added to "'+store.mylists[target].label+'"');
+    localStorage.setItem('mylists', JSON.stringify(store.mylists));
+    CATALOG = buildCatalog(); ALL_SYMBOLS = getAllSymbols();
+    renderList();
   }
 
   function renderList(){
-    const q=(searchInput.value||'').trim(); let symbols, title;
+    const q=(searchTop.value||'').trim(); let symbols, title;
     if(q){ symbols=getGlobalResults(q); title='Search results'; }
     else if(store.asset==='favorites'){ symbols=getGroupSymbols(); title='My Favorites'; }
     else if(store.asset==='mylists'){ symbols=getGroupSymbols(); title=store.mylists[store.group]?.label || 'My Lists'; }
@@ -389,7 +371,7 @@
       const plus=document.createElement('span'); plus.className='plus'; plus.textContent='＋'; plus.title='Add to My Lists'; plus.addEventListener('click',(e)=>{ e.stopPropagation(); addToMyList(obj); });
       const bell=document.createElement('span'); bell.className='bell'; bell.textContent='🔔'; bell.title='Set alert'; bell.addEventListener('click',(e)=>{ e.stopPropagation(); createAlertFlow(obj); });
       const star=document.createElement('span'); star.className='star'+(isFav(obj.s)?' fav':''); star.textContent=isFav(obj.s)?'★':'☆'; star.title=isFav(obj.s)?'Remove favorite':'Add favorite';
-      star.addEventListener('click',(e)=>{ e.stopPropagation(); if(isFav(obj.s)) store.favorites=store.favorites.filter(x=>x.s!==obj.s); else store.favorites.push(obj); saveFavs(); star.classList.toggle('fav'); star.textContent=star.classList.contains('fav')?'★':'☆'; if(store.asset==='favorites'&&!star.classList.contains('fav')) renderList(); });
+      star.addEventListener('click',(e)=>{ e.stopPropagation(); if(isFav(obj.s)) store.favorites=store.favorites.filter(x=>x.s!==obj.s); else store.favorites.push(obj); saveFavs(); star.classList.toggle('fav'); star.textContent=star.classList.contains('fav')?'★':'☆'; });
       const arrow=document.createElement('div'); arrow.className='muted'; arrow.style.marginLeft='8px'; arrow.textContent='➜';
       right.appendChild(plus); right.appendChild(bell); right.appendChild(star); right.appendChild(arrow);
       row.appendChild(left); row.appendChild(right);
@@ -397,7 +379,7 @@
       listHost.appendChild(row);
     });
   }
-  searchInput.addEventListener('input', ()=>renderList());
+  searchTop.addEventListener('input', ()=>renderList());
   renderList();
 
   // ====== Advanced chart ======
@@ -493,13 +475,10 @@
   setInterval(pollAlerts, Math.max(10, store.pollSec)*1000);
 
   // ====== Toast helper ======
-  const firstToast=document.getElementById('firstToast'); const toastOk=document.getElementById('toastOk');
-  if(!localStorage.getItem('helpSeen')) firstToast.style.display='inline-flex';
-  if(toastOk) toastOk.addEventListener('click', ()=>{ localStorage.setItem('helpSeen','true'); firstToast.style.display='none'; });
   function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color='#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
 </script>
 <script>
-  // Advanced chart loader (kept separate to ensure DOM is ready)
+  // Advanced chart loader (ensures DOM is ready)
   (function(){
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
     const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
