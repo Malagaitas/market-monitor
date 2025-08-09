@@ -3,14 +3,30 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>My Simple Market Monitor</title>
+  <title>Markets — Advanced Timeframes</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
-    header { padding: 8px 12px; background: #0f62fe; color: white; }
+    :root {
+      --brand:#0f62fe;
+      --bg:#fafafa;
+      --card:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --border:#e5e5e5;
+    }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
+    header { padding: 10px 14px; background: var(--brand); color: white; }
     main { padding: 16px; max-width: 1200px; margin: 0 auto; }
     h1 { font-size: 20px; margin: 0 0 8px; }
     .section { margin-top: 16px; }
-    footer { text-align:center; color:#888; padding: 16px; border-top:1px solid #eee; }
+    .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    select { padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); }
+    footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
+    .spacer { flex:1; }
+    .label { font-weight:700; }
   </style>
 </head>
 <body>
@@ -18,221 +34,116 @@
     <h1>Markets — S&P 500 & Crypto</h1>
   </header>
   <main>
-    <div class="section">
-      
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-{
-  "symbols": [
-    {
-      "proName": "NASDAQ:NVDA",
-      "title": "NVIDIA"
-    },
-    {
-      "proName": "NASDAQ:MSFT",
-      "title": "Microsoft"
-    },
-    {
-      "proName": "NASDAQ:AAPL",
-      "title": "Apple"
-    },
-    {
-      "proName": "NASDAQ:AMZN",
-      "title": "Amazon"
-    },
-    {
-      "proName": "NASDAQ:META",
-      "title": "Meta"
-    },
-    {
-      "proName": "NASDAQ:AVGO",
-      "title": "Broadcom"
-    },
-    {
-      "proName": "NASDAQ:GOOGL",
-      "title": "Alphabet A"
-    },
-    {
-      "proName": "NASDAQ:GOOG",
-      "title": "Alphabet C"
-    },
-    {
-      "proName": "NYSE:BRK.B",
-      "title": "Berkshire B"
-    },
-    {
-      "proName": "NASDAQ:TSLA",
-      "title": "Tesla"
-    },
-    {
-      "proName": "BINANCE:BTCUSDT",
-      "title": "Bitcoin"
-    },
-    {
-      "proName": "BINANCE:ETHUSDT",
-      "title": "Ethereum"
-    },
-    {
-      "proName": "BINANCE:BNBUSDT",
-      "title": "BNB"
-    },
-    {
-      "proName": "BINANCE:SOLUSDT",
-      "title": "Solana"
-    },
-    {
-      "proName": "KRAKEN:USDTUSD",
-      "title": "Tether (USD)"
-    }
-  ],
-  "showSymbolLogo": true,
-  "isTransparent": false,
-  "displayMode": "adaptive",
-  "colorTheme": "light",
-  "locale": "en"
-}
-  </script>
-</div>
-
-    </div>
-    <div class="section">
-      
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-{
-  "colorTheme": "light",
-  "dateRange": "1D",
-  "showChart": true,
-  "locale": "en",
-  "largeChartUrl": "",
-  "isTransparent": false,
-  "showSymbolLogo": true,
-  "showFloatingTooltip": true,
-  "width": "100%",
-  "height": "660",
-  "tabs": [
-    {
-      "title": "S&P Top 20",
-      "symbols": [
-        {
-          "s": "NASDAQ:NVDA",
-          "d": "NVIDIA"
-        },
-        {
-          "s": "NASDAQ:MSFT",
-          "d": "Microsoft"
-        },
-        {
-          "s": "NASDAQ:AAPL",
-          "d": "Apple"
-        },
-        {
-          "s": "NASDAQ:AMZN",
-          "d": "Amazon"
-        },
-        {
-          "s": "NASDAQ:META",
-          "d": "Meta"
-        },
-        {
-          "s": "NASDAQ:AVGO",
-          "d": "Broadcom"
-        },
-        {
-          "s": "NASDAQ:GOOGL",
-          "d": "Alphabet A"
-        },
-        {
-          "s": "NASDAQ:GOOG",
-          "d": "Alphabet C"
-        },
-        {
-          "s": "NYSE:BRK.B",
-          "d": "Berkshire B"
-        },
-        {
-          "s": "NASDAQ:TSLA",
-          "d": "Tesla"
-        },
-        {
-          "s": "NYSE:JPM",
-          "d": "JPMorgan"
-        },
-        {
-          "s": "NYSE:WMT",
-          "d": "Walmart"
-        },
-        {
-          "s": "NYSE:LLY",
-          "d": "Eli Lilly"
-        },
-        {
-          "s": "NYSE:V",
-          "d": "Visa"
-        },
-        {
-          "s": "NYSE:ORCL",
-          "d": "Oracle"
-        },
-        {
-          "s": "NYSE:MA",
-          "d": "Mastercard"
-        },
-        {
-          "s": "NASDAQ:NFLX",
-          "d": "Netflix"
-        },
-        {
-          "s": "NYSE:XOM",
-          "d": "ExxonMobil"
-        },
-        {
-          "s": "NASDAQ:COST",
-          "d": "Costco"
-        },
-        {
-          "s": "NYSE:JNJ",
-          "d": "Johnson & Johnson"
-        }
-      ]
-    },
-    {
-      "title": "Crypto Top Vol",
-      "symbols": [
-        {
-          "s": "BINANCE:BTCUSDT",
-          "d": "Bitcoin"
-        },
-        {
-          "s": "BINANCE:ETHUSDT",
-          "d": "Ethereum"
-        },
-        {
-          "s": "BINANCE:BNBUSDT",
-          "d": "BNB"
-        },
-        {
-          "s": "BINANCE:SOLUSDT",
-          "d": "Solana"
-        },
-        {
-          "s": "KRAKEN:USDTUSD",
-          "d": "Tether (USD)"
-        }
-      ]
-    }
-  ]
-}
-  </script>
-</div>
-
-    </div>
-    <div class="section">
-      <p>Tip: Click any symbol to open an interactive chart on TradingView. This page is read-only and requires no login.</p>
+    <div class="section card">
+      <div class="row">
+        <div class="controls">
+          <span class="label">Symbol:</span>
+          <select id="advSym"><option value="NASDAQ:NVDA">NVDA — NVIDIA</option>
+<option value="NASDAQ:MSFT">MSFT — Microsoft</option>
+<option value="NASDAQ:AAPL">AAPL — Apple</option>
+<option value="NASDAQ:AMZN">AMZN — Amazon</option>
+<option value="NASDAQ:META">META — Meta</option>
+<option value="NASDAQ:AVGO">AVGO — Broadcom</option>
+<option value="NASDAQ:GOOGL">GOOGL — Alphabet A</option>
+<option value="NASDAQ:GOOG">GOOG — Alphabet C</option>
+<option value="NYSE:BRK.B">BRK.B — Berkshire B</option>
+<option value="NASDAQ:TSLA">TSLA — Tesla</option>
+<option value="NYSE:JPM">JPM — JPMorgan</option>
+<option value="NYSE:WMT">WMT — Walmart</option>
+<option value="NYSE:LLY">LLY — Eli Lilly</option>
+<option value="NYSE:V">V — Visa</option>
+<option value="NYSE:ORCL">ORCL — Oracle</option>
+<option value="NYSE:MA">MA — Mastercard</option>
+<option value="NASDAQ:NFLX">NFLX — Netflix</option>
+<option value="NYSE:XOM">XOM — ExxonMobil</option>
+<option value="NASDAQ:COST">COST — Costco</option>
+<option value="NYSE:JNJ">JNJ — Johnson & Johnson</option>
+<option value="BINANCE:BTCUSDT">BTCUSDT — Bitcoin</option>
+<option value="BINANCE:ETHUSDT">ETHUSDT — Ethereum</option>
+<option value="BINANCE:BNBUSDT">BNBUSDT — BNB</option>
+<option value="BINANCE:SOLUSDT">SOLUSDT — Solana</option>
+<option value="KRAKEN:USDTUSD">USDTUSD — Tether (USD)</option></select>
+        </div>
+        <div class="spacer"></div>
+        <div class="controls">
+          <span class="label">Interval:</span>
+          <button class="btn active" data-int="D">1D</button>
+          <button class="btn" data-int="W">1W</button>
+          <button class="btn" data-int="60">1H</button>
+        </div>
+      </div>
+      <div class="controls">
+        <span class="label">Range:</span>
+        <button class="btn" data-range="1D">1D</button>
+        <button class="btn" data-range="1M">1M</button>
+        <button class="btn" data-range="3M">3M</button>
+        <button class="btn" data-range="YTD">YTD</button>
+        <button class="btn active" data-range="12M">1Y</button>
+        <button class="btn" data-range="60M">5Y</button>
+        <button class="btn" data-range="120M">10Y</button>
+        <button class="btn" data-range="ALL">ALL</button>
+      </div>
+      <div id="adv-host" style="height:640px;"></div>
+      <p style="margin-top:8px;color:var(--muted)">Tip: Interval changes candle resolution; Range changes the visible window (10Y ≈ 120 months).</p>
     </div>
   </main>
-  <footer>Built for you — simple, fast, no login required.</footer>
+  <footer>Built for you — selectable intervals and ranges.</footer>
+
+  <script>
+    const advHost = document.getElementById('adv-host');
+    const advSelect = document.getElementById('advSym');
+    const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
+    const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
+
+    let advSymbol = advSelect.value;
+    let advInterval = 'D';   // '60' = 1H, 'D' = 1D, 'W' = 1W
+    let advRange = '12M';    // default 1Y
+
+    function renderAdvanced() {
+      advHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      const cfg = {
+        autosize: true,
+        symbol: advSymbol,
+        interval: advInterval,
+        range: advRange,
+        timezone: 'Etc/UTC',
+        theme: 'light',
+        style: '1',
+        locale: 'en',
+        allow_symbol_change: false,
+        withdateranges: true,
+        hide_side_toolbar: false,
+        hide_top_toolbar: false,
+        save_image: false,
+        studies: [],
+        calendar: false,
+        support_host: 'https://www.tradingview.com'
+      };
+      script.innerHTML = JSON.stringify(cfg, null, 2);
+      advHost.querySelector('.tradingview-widget-container').appendChild(script);
+    }
+
+    intButtons.forEach(btn => btn.addEventListener('click', () => {
+      intButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      advInterval = btn.dataset.int;
+      renderAdvanced();
+    }));
+
+    rangeButtons.forEach(btn => btn.addEventListener('click', () => {
+      rangeButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      advRange = btn.dataset.range;
+      renderAdvanced();
+    }));
+
+    advSelect.addEventListener('change', () => { advSymbol = advSelect.value; renderAdvanced(); });
+
+    renderAdvanced();
+  </script>
 </body>
 </html>
