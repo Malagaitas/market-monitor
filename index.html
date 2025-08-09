@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
   <style>
-    :root { --brand:#0f62fe; --bg:#f5f7fb; --card:#ffffff; --text:#0b1221; --muted:#66758f; --border:#e5e8ef; --sidebar:#eef2ff; --star:#ffb400; }
+    :root { --brand:#0f62fe; --bg:#f5f7fb; --card:#ffffff; --text:#0b1221; --muted:#66758f; --border:#e5e7ef; --sidebar:#eef2ff; --star:#ffb400; }
     [data-theme="dark"] { --bg:#0b0f17; --card:#111827; --text:#f5f7fb; --muted:#b6c0d1; --border:#24324a; --sidebar:#0f172a; --star:#ffd166; }
     * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial,sans-serif; }
     header { padding:10px 16px; background:var(--brand); color:#fff; display:flex; justify-content:space-between; align-items:center; gap:8px; }
@@ -18,13 +18,19 @@
     .badge { position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:11px; font-weight:800; padding:2px 6px; border-radius:999px; }
     main { max-width:1500px; margin:0 auto; padding:16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; }
-    /* NEW: Horizontal toolbar */
-    .toolbar { display:flex; gap:10px; align-items:center; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--card); margin-top:12px; }
-    .toolbar .search { flex:1; }
+    /* Toolbar */
+    .toolbar { display:flex; gap:12px; align-items:center; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--card); margin-top:12px; flex-wrap:wrap; }
+    .toolbar .search { flex:0 0 200px; } /* smaller search */
     .toolbar input[type="text"] { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
-    .toolbar select, .toolbar button, .toolbar .btn { padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); cursor:pointer; }
-    .toolbar .muted { color:var(--muted); font-size:12px; }
-    /* 2-column layout only (list + chart) */
+    .toolbar .tabs-wrap { display:flex; flex-direction:column; gap:6px; flex:1 1 auto; min-width:280px; }
+    .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+    .tab { padding:8px 12px; border:1px solid var(--border); border-radius:999px; background:var(--card); cursor:pointer; font-weight:600; display:flex; align-items:center; gap:6px; }
+    .tab .ico { font-size:16px; line-height:1; }
+    .tab.active { background:var(--brand); border-color:var(--brand); color:white; }
+    .tab.active .ico { filter: brightness(2); }
+    .tabs-sub .tab { padding:6px 10px; font-weight:600; opacity:.95; }
+    .toolbar .btn { padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); cursor:pointer; }
+    /* Layout: list + chart */
     .layout { display:grid; grid-template-columns:360px 1fr; gap:16px; align-items:start; margin-top:16px; }
     .layout.list-collapsed { grid-template-columns:1fr; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
@@ -42,7 +48,7 @@
     .bell { font-size:18px; margin-left:8px; user-select:none; }
     .plus { font-size:20px; margin-left:8px; user-select:none; }
     .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); right:8px; display:none; }
-    @media (max-width: 1080px) { .layout { grid-template-columns:1fr; } }
+    @media (max-width: 1080px) { .layout { grid-template-columns:1fr; } .toolbar .search { flex:1 1 100%; order:-1; } }
   </style>
 </head>
 <body>
@@ -57,10 +63,9 @@
         <h4 style="margin:6px 0 10px;">Quick tips</h4>
         <ul style="margin:0 0 6px 18px;">
           <li>Use <b>☰</b> to hide/show the left list.</li>
-          <li>Search finds symbols across all categories.</li>
-          <li>Click a symbol to load it; <b>★</b> for favorites.</li>
-          <li><b>＋</b> adds to your custom watchlists (My Lists).</li>
-          <li><b>🔔</b> sets a local price alert.</li>
+          <li>Tabs: first row = Asset class; second row = Group.</li>
+          <li>Search (left) finds symbols across all categories.</li>
+          <li><b>＋</b> adds to your custom watchlists; <b>🔔</b> sets alerts.</li>
         </ul>
       </div>
       <div id="alertsPopover" class="card" style="position:absolute; right:16px; top:52px; display:none; width:380px; max-height:420px; overflow:auto;">
@@ -77,13 +82,13 @@
       <div id="ticker-host"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div>
     </div>
 
-    <!-- NEW toolbar (search + asset/group) -->
+    <!-- Toolbar: smaller search + tabs with icons -->
     <div class="toolbar" id="assetToolbar">
-      <div class="search" style="min-width:260px;"><input id="searchTop" type="text" placeholder="Search symbols (e.g., SOLUSDT, VT, EURCHF)"/></div>
-      <div class="muted">Asset:</div>
-      <select id="assetSelect"></select>
-      <div class="muted">Group:</div>
-      <select id="groupSelect"></select>
+      <div class="search"><input id="searchTop" type="text" placeholder="Search (e.g., SOLUSDT, VT, EURCHF)"/></div>
+      <div class="tabs-wrap">
+        <div id="assetTabs" class="tabs"></div>
+        <div id="groupTabs" class="tabs tabs-sub"></div>
+      </div>
       <button id="newListBtn" class="btn" style="display:none;">+ New list</button>
     </div>
 
@@ -220,7 +225,7 @@
   "colorTheme": "dark",
   "locale": "en"
 } };
-  const CATALOG_BASE = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "mylists": {"label": "My Lists", "groups": {}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume (Binance)", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:XRPUSDT", "d": "XRPUSDT \u2014 XRP"}, {"s": "BINANCE:DOGEUSDT", "d": "DOGEUSDT \u2014 Dogecoin"}, {"s": "BINANCE:TONUSDT", "d": "TONUSDT \u2014 Toncoin"}, {"s": "BINANCE:ADAUSDT", "d": "ADAUSDT \u2014 Cardano"}, {"s": "BINANCE:TRXUSDT", "d": "TRXUSDT \u2014 TRON"}, {"s": "BINANCE:AVAXUSDT", "d": "AVAXUSDT \u2014 Avalanche"}, {"s": "BINANCE:LINKUSDT", "d": "LINKUSDT \u2014 Chainlink"}, {"s": "BINANCE:LTCUSDT", "d": "LTCUSDT \u2014 Litecoin"}, {"s": "BINANCE:SHIBUSDT", "d": "SHIBUSDT \u2014 Shiba Inu"}, {"s": "BINANCE:NEARUSDT", "d": "NEARUSDT \u2014 NEAR"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "fx": {"label": "FX", "groups": {"majors_chf": {"label": "Majors & CHF", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures"}]}}}};
+  const CATALOG_BASE = {"favorites": {"label": "Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "mylists": {"label": "My Lists", "groups": {}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume (Binance)", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:XRPUSDT", "d": "XRPUSDT \u2014 XRP"}, {"s": "BINANCE:DOGEUSDT", "d": "DOGEUSDT \u2014 Dogecoin"}, {"s": "BINANCE:TONUSDT", "d": "TONUSDT \u2014 Toncoin"}, {"s": "BINANCE:ADAUSDT", "d": "ADAUSDT \u2014 Cardano"}, {"s": "BINANCE:TRXUSDT", "d": "TRXUSDT \u2014 TRON"}, {"s": "BINANCE:AVAXUSDT", "d": "AVAXUSDT \u2014 Avalanche"}, {"s": "BINANCE:LINKUSDT", "d": "LINKUSDT \u2014 Chainlink"}, {"s": "BINANCE:LTCUSDT", "d": "LTCUSDT \u2014 Litecoin"}, {"s": "BINANCE:SHIBUSDT", "d": "SHIBUSDT \u2014 Shiba Inu"}, {"s": "BINANCE:NEARUSDT", "d": "NEARUSDT \u2014 NEAR"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "fx": {"label": "FX", "groups": {"majors_chf": {"label": "Majors & CHF", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures"}]}}}};
 
   function safeJSON(s) { try { return JSON.parse(s||''); } catch(e) { return null; } }
 
@@ -257,7 +262,6 @@
   updateTheme();
   themeBtn.addEventListener('click', ()=>{ store.theme = store.theme==='light'?'dark':'light'; localStorage.setItem('theme', store.theme); document.documentElement.setAttribute('data-theme', store.theme); updateTheme(); renderTicker(); renderAdvanced(); });
 
-  // Popovers
   function togglePopover(btnId, popId){ const btn=document.getElementById(btnId), pop=document.getElementById(popId); let open=false; btn.addEventListener('click',(e)=>{ e.stopPropagation(); open=!open; pop.style.display=open?'block':'none'; if(popId==='alertsPopover') renderAlertsList(); }); document.addEventListener('click',(e)=>{ if(open && !pop.contains(e.target) && e.target!==btn){ open=false; pop.style.display='none'; } }); }
   togglePopover('helpBtn','helpPopover'); togglePopover('alertsBtn','alertsPopover');
 
@@ -273,52 +277,72 @@
   }
   renderTicker();
 
-  // ====== Toolbar (asset/group/search) ======
-  const assetSelect = document.getElementById('assetSelect');
-  const groupSelect = document.getElementById('groupSelect');
-  const newListBtn  = document.getElementById('newListBtn');
-  const searchTop   = document.getElementById('searchTop');
+  // ====== Tabs (assets + groups) ======
+  const assetTabs = document.getElementById('assetTabs');
+  const groupTabs = document.getElementById('groupTabs');
+  const newListBtn = document.getElementById('newListBtn');
+  const searchTop  = document.getElementById('searchTop');
 
-  function refreshToolbarOptions(){
-    // Assets
-    assetSelect.innerHTML = '';
-    Object.entries(CATALOG).forEach(([id, meta])=>{
-      const opt = document.createElement('option'); opt.value=id; opt.textContent=meta.label; assetSelect.appendChild(opt);
-    });
-    assetSelect.value = store.asset;
-    // Groups
-    refreshGroupOptions();
-    // New list button
-    newListBtn.style.display = assetSelect.value==='mylists' ? 'inline-block' : 'none';
-  }
-  function refreshGroupOptions(){
-    groupSelect.innerHTML = '';
-    const groups = CATALOG[assetSelect.value]?.groups || {};
-    Object.entries(groups).forEach(([gid, g])=>{
-      const opt = document.createElement('option'); opt.value=gid; opt.textContent=g.label; groupSelect.appendChild(opt);
-    });
-    if(groups[store.group]) groupSelect.value = store.group; else groupSelect.selectedIndex = 0;
-  }
-  refreshToolbarOptions();
+  const ICONS = {
+    favorites: '★',
+    mylists: '🗂️',
+    equities: '📈',
+    crypto: '🪙',
+    etfs: '📦',
+    fx: '💱',
+    commodities: '⛏️'
+  };
 
-  assetSelect.addEventListener('change', ()=>{
-    store.asset = assetSelect.value; localStorage.setItem('asset', store.asset);
-    refreshGroupOptions();
-    store.group = groupSelect.value; localStorage.setItem('group', store.group);
-    newListBtn.style.display = store.asset==='mylists' ? 'inline-block' : 'none';
-    renderList();
-  });
-  groupSelect.addEventListener('change', ()=>{
-    store.group = groupSelect.value; localStorage.setItem('group', store.group);
-    renderList();
-  });
+  function renderAssetTabs(){
+    const order = ['favorites','mylists','equities','crypto','etfs','fx','commodities'];
+    assetTabs.innerHTML='';
+    order.forEach(id=>{
+      if(!CATALOG[id]) return;
+      const tab=document.createElement('div'); tab.className='tab'+(store.asset===id?' active':'');
+      tab.innerHTML = '<span class="ico">'+(ICONS[id]||'•')+'</span>' + CATALOG[id].label;
+      tab.addEventListener('click',()=>{
+        store.asset=id; localStorage.setItem('asset', id);
+        const firstGroupKey = Object.keys(CATALOG[id].groups)[0] || null;
+        store.group = firstGroupKey; localStorage.setItem('group', store.group||'');
+        renderAssetTabs(); renderGroupTabs(); renderList();
+        newListBtn.style.display = (id==='mylists')?'inline-block':'none';
+      });
+      assetTabs.appendChild(tab);
+    });
+    newListBtn.style.display = (store.asset==='mylists')?'inline-block':'none';
+  }
+
+  function renderGroupTabs(){
+    groupTabs.innerHTML='';
+    const groups = (CATALOG[store.asset] && CATALOG[store.asset].groups) || {};
+    const keys = Object.keys(groups);
+    if(keys.length===0){
+      const empty=document.createElement('div'); empty.className='muted'; empty.textContent='No groups'; groupTabs.appendChild(empty);
+      return;
+    }
+    keys.forEach(gid=>{
+      const tab=document.createElement('div'); tab.className='tab'+(store.group===gid?' active':'');
+      tab.textContent=groups[gid].label;
+      tab.addEventListener('click',()=>{
+        store.group=gid; localStorage.setItem('group', gid);
+        renderGroupTabs(); renderList();
+      });
+      groupTabs.appendChild(tab);
+    });
+  }
+
   newListBtn.addEventListener('click', ()=>{
     const name = prompt('New list name:'); if(!name) return;
     const id = Math.random().toString(36).slice(2,9);
     store.mylists[id] = { label: name, symbols: [] };
     localStorage.setItem('mylists', JSON.stringify(store.mylists));
-    CATALOG = buildCatalog(); refreshToolbarOptions(); renderList();
+    CATALOG = buildCatalog();
+    // Ensure asset is mylists and select new group
+    store.asset='mylists'; store.group=id; localStorage.setItem('asset','mylists'); localStorage.setItem('group', id);
+    renderAssetTabs(); renderGroupTabs(); renderList();
   });
+
+  renderAssetTabs(); renderGroupTabs();
 
   // ====== Layout (list collapse) ======
   const gridLayout = document.getElementById('gridLayout');
@@ -335,11 +359,10 @@
 
   // ====== List + search ======
   const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList');
-  function flattenAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.append?0:0)); }); return arr; } // placeholder to avoid accidental replace
   function getAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d}))); }); const seen=new Set(); return arr.filter(x=> seen.has(x.s)?false:(seen.add(x.s),true)); }
   let ALL_SYMBOLS = getAllSymbols();
 
-  function getGroupSymbols(){ if(store.asset==='favorites') return store.favorites; if(store.asset==='mylists') return (store.mylists[store.group]?.symbols)||[]; return CATALOG[store.asset].groups[store.group].symbols; }
+  function getGroupSymbols(){ if(store.asset==='favorites') return store.favorites; if(store.asset==='mylists') return (store.mylists[store.group]?.symbols)||[]; return (CATALOG[store.asset]?.groups[store.group]?.symbols)||[]; }
   function getGlobalResults(q){ const qq=q.toLowerCase(); return ALL_SYMBOLS.filter(x=>x.s.toLowerCase().includes(qq)||(x.d||'').toLowerCase().includes(qq)); }
   function isFav(sym){ return store.favorites.some(x=>x.s===sym); }
   function saveFavs(){ localStorage.setItem('favorites', JSON.stringify(store.favorites)); }
@@ -351,7 +374,7 @@
     const arr=store.mylists[target].symbols; if(!arr.some(x=>x.s===obj.s)) arr.push(obj);
     localStorage.setItem('mylists', JSON.stringify(store.mylists));
     CATALOG = buildCatalog(); ALL_SYMBOLS = getAllSymbols();
-    renderList();
+    if(store.asset==='mylists' && store.group===target) renderList();
   }
 
   function renderList(){
@@ -359,7 +382,7 @@
     if(q){ symbols=getGlobalResults(q); title='Search results'; }
     else if(store.asset==='favorites'){ symbols=getGroupSymbols(); title='My Favorites'; }
     else if(store.asset==='mylists'){ symbols=getGroupSymbols(); title=store.mylists[store.group]?.label || 'My Lists'; }
-    else { const meta=CATALOG[store.asset].groups[store.group]; symbols=meta.symbols; title=meta.label; }
+    else { const meta=(CATALOG[store.asset] && CATALOG[store.asset].groups[store.group]) || {label:'Symbols', symbols:[]}; symbols=meta.symbols; title=meta.label; }
     listTitle.textContent=title; countPill.textContent=symbols.length+' items'; listHost.innerHTML='';
     symbols.forEach(obj=>{
       const row=document.createElement('div'); row.className='row';
@@ -441,7 +464,6 @@
       const from=code.slice(0,3), to=code.slice(3);
       return { source:'alpha', url:'https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency='+from+'&to_currency='+to+'&apikey='+store.alphaKey, parse:(j)=>parseFloat(j['Realtime Currency Exchange Rate']&&j['Realtime Currency Exchange Rate']['5. Exchange Rate']) };
     }
-    // Stocks/ETFs via Alpha Vantage GLOBAL_QUOTE (SIX mapped to .SW)
     let ticker=code; if(ex==='SIX') ticker=code+'.SW';
     if(store.alphaKey) return { source:'alpha', url:'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol='+encodeURIComponent(ticker)+'&apikey='+store.alphaKey, parse:(j)=>parseFloat(j['Global Quote']&&j['Global Quote']['05. price']) };
     return { source:null };
@@ -475,7 +497,7 @@
   setInterval(pollAlerts, Math.max(10, store.pollSec)*1000);
 
   // ====== Toast helper ======
-  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color='#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
+  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color:'#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
 </script>
 <script>
   // Advanced chart loader (ensures DOM is ready)
