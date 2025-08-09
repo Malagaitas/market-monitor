@@ -1,67 +1,38 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — sidebar/list toggles, help tips, more assets (SIX, ETFs, Commodities), global search, favorites, advanced chart."/>
+  <meta name="description" content="Great Portfolio Tracer — more crypto, custom watchlists, price alerts, collapsible columns and advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
   <style>
-    :root {
-      --brand:#0f62fe;
-      --bg:#f5f7fb;
-      --card:#ffffff;
-      --text:#0b1221;
-      --muted:#66758f;
-      --border:#e5e8ef;
-      --sidebar:#eef2ff;
-      --star:#ffb400;
-      --toast:#111827;
-      --toastText:#f9fafb;
-    }
-    [data-theme="dark"] {
-      --bg:#0b0f17;
-      --card:#111827;
-      --text:#f5f7fb;
-      --muted:#b6c0d1;
-      --border:#24324a;
-      --sidebar:#0f172a;
-      --star:#ffd166;
-      --toast:#f3f4f6;
-      --toastText:#111827;
-    }
-    * { box-sizing:border-box; }
-    html, body { height:100%; }
-    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
-    header { padding: 10px 16px; background: var(--brand); color: white; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .brand img { height:26px; width:auto; display:block; }
+    :root { --brand:#0f62fe; --bg:#f5f7fb; --card:#ffffff; --text:#0b1221; --muted:#66758f; --border:#e5e8ef; --sidebar:#eef2ff; --star:#ffb400; }
+    [data-theme="dark"] { --bg:#0b0f17; --card:#111827; --text:#f5f7fb; --muted:#b6c0d1; --border:#24324a; --sidebar:#0f172a; --star:#ffd166; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--text); font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial,sans-serif; }
+    header { padding:10px 16px; background:var(--brand); color:#fff; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .brand { display:flex; gap:10px; align-items:center; } .brand img { height:26px }
     .header-actions { display:flex; align-items:center; gap:8px; }
-    .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
-                   padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
-    .toggle-btn svg { width:18px; height:18px; }
-    .icon-round { width:36px; height:36px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); cursor:pointer; }
-    main { max-width: 1500px; margin: 0 auto; padding: 16px; }
-    .section { margin-top: 16px; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-    .layout { display:grid; grid-template-columns: 260px 360px 1fr; gap:16px; align-items:start; transition: grid-template-columns 200ms ease; }
-    .layout.sidebar-collapsed { grid-template-columns: 0 360px 1fr; }
-    .layout.list-collapsed { grid-template-columns: 260px 1fr; }
-    .layout.sidebar-collapsed.list-collapsed { grid-template-columns: 1fr; }
+    .toggle-btn { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff; padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
+    .icon-round { width:36px; height:36px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); cursor:pointer; position:relative; }
+    .badge { position:absolute; top:-6px; right:-6px; background:#ef4444; color:white; font-size:11px; font-weight:800; padding:2px 6px; border-radius:999px; }
+    main { max-width:1500px; margin:0 auto; padding:16px; }
+    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; }
+    .layout { display:grid; grid-template-columns:260px 360px 1fr; gap:16px; align-items:start; transition:grid-template-columns 200ms ease; }
+    .layout.sidebar-collapsed { grid-template-columns:0 360px 1fr; }
+    .layout.list-collapsed { grid-template-columns:260px 1fr; }
+    .layout.sidebar-collapsed.list-collapsed { grid-template-columns:1fr; }
     .sidebar { background:var(--sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:hidden; }
-    .layout.sidebar-collapsed .sidebar { display:none; }
-    .sidebar h3 { margin:4px 0 8px; font-size:14px; opacity:.9; }
-    .sidebar .controls-inline { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
-    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
-    .icon-btn:active { transform: translateY(1px); }
-    .nav-group { margin-bottom:10px; }
-    .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text);
-                 padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; }
-    .nav-item.active { background: var(--brand); border-color: var(--brand); color:white; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
-    .layout.list-collapsed .list { display:none; }
+    .panel-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .panel-title { margin:0; font-size:14px; font-weight:800; opacity:.9; }
+    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
+    .nav-group { margin-top:10px; }
+    .group-title { font-weight:800; margin:8px 0 6px; font-size:13px; text-transform:uppercase; opacity:.8; }
+    .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text); padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; position:relative; }
+    .nav-item.active { background:var(--brand); border-color:var(--brand); color:white; }
+    .nav-item .edit { position:absolute; right:8px; top:6px; font-size:12px; opacity:.7; cursor:pointer; }
     .list-header { display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--border); justify-content:space-between; }
     .search input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
@@ -69,93 +40,78 @@
     .left { display:flex; flex-direction:column; gap:3px; }
     .symbol { font-weight:700; }
     .muted { color:var(--muted); font-size:12px; }
-    .pill { font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
     .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; color:var(--text); }
     .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
     .star { font-size:18px; margin-left:8px; user-select:none; }
-    .star.fav { color: var(--star); }
+    .bell { font-size:18px; margin-left:8px; user-select:none; }
+    .plus { font-size:20px; margin-left:8px; user-select:none; }
     .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
     #assetsShowFloating { left: 8px; display:none; }
     #listShowFloating { right: 8px; display:none; }
-    .help-popover { position:absolute; top:44px; right:16px; background:var(--card); color:var(--text); border:1px solid var(--border); border-radius:12px; padding:12px; width: 320px; box-shadow: 0 6px 24px rgba(0,0,0,.18); display:none; }
-    .help-popover h4 { margin:0 0 8px; }
-    .help-popover ul { margin:0; padding-left:18px; }
-    .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 18px; background: var(--toast); color: var(--toastText); padding: 10px 14px; border-radius: 999px; display:none; font-weight:600; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
-    .toast button { margin-left: 10px; border: 1px solid rgba(255,255,255,.3); background: transparent; color: inherit; padding: 4px 8px; border-radius: 999px; cursor:pointer; }
-    footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
     @media (max-width: 1080px) {
-      .layout { grid-template-columns: 1fr; }
-      .layout.sidebar-collapsed { grid-template-columns: 1fr; }
-      .layout.list-collapsed { grid-template-columns: 1fr; }
-      .layout.sidebar-collapsed.list-collapsed { grid-template-columns: 1fr; }
-      .help-popover { right: 8px; width: 88vw; }
+      .layout { grid-template-columns:1fr; }
+      .layout.sidebar-collapsed, .layout.list-collapsed, .layout.sidebar-collapsed.list-collapsed { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">
-      <img src="logo.svg" alt="GPT logo" />
-      <strong>GPT - Great Portfolio Tracer</strong>
-    </div>
+    <div class="brand"><img src="logo.svg" alt="GPT logo"/><strong>GPT - Great Portfolio Tracer</strong></div>
     <div class="header-actions">
+      <div id="alertsBtn" class="icon-round" title="Alerts">🔔<span id="alertsBadge" class="badge" style="display:none;">0</span></div>
       <div id="helpBtn" class="icon-round" title="Help">ⓘ</div>
-      <button id="themeToggle" class="toggle-btn" title="Toggle light/dark">
-        <span id="themeIcon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
-        </span>
-        <span id="themeLabel">Light</span>
-      </button>
-      <div id="helpPopover" class="help-popover" role="dialog" aria-modal="false">
-        <h4>Quick tips</h4>
-        <ul>
-          <li>Click <b>☰</b> in a column to hide/show that panel.</li>
-          <li>Use the search box to find symbols across all categories.</li>
-          <li>Click a symbol to load it on the chart.</li>
-          <li>Click <b>★</b> to add/remove favorites (saved on this device).</li>
-          <li>Use the <b>Interval</b> and <b>Range</b> buttons above the chart.</li>
-          <li>Theme and layout settings are remembered.</li>
+      <div id="settingsBtn" class="icon-round" title="Settings">⚙</div>
+      <button id="themeToggle" class="toggle-btn" title="Toggle light/dark"><span id="themeIcon">☀</span><span id="themeLabel">Light</span></button>
+      <div id="helpPopover" class="card" style="position:absolute; right:16px; top:52px; display:none; width:360px;">
+        <h4 style="margin:6px 0 10px;">Quick tips</h4>
+        <ul style="margin:0 0 6px 18px;">
+          <li>Use <b>☰</b> to hide/show columns.</li>
+          <li>Search finds symbols across all categories.</li>
+          <li>Click a symbol to load it; <b>★</b> for favorites.</li>
+          <li><b>＋</b> adds to your custom watchlists (My Lists).</li>
+          <li><b>🔔</b> sets a local price alert.</li>
         </ul>
+      </div>
+      <div id="alertsPopover" class="card" style="position:absolute; right:16px; top:52px; display:none; width:380px; max-height:420px; overflow:auto;">
+        <h4 style="margin:6px 0 10px;">Active alerts</h4>
+        <div id="alertsList"></div>
+        <div id="clearAlerts" class="muted" style="margin-top:8px; cursor:pointer;">Clear all</div>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Top ticker -->
-    <div class="section card">
-      <div id="ticker-host">
-        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>
-      </div>
+    <div class="card" style="margin-top:16px">
+      <div id="ticker-host"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div>
     </div>
 
-    <!-- Three-column layout -->
-    <div id="gridLayout" class="section layout">
+    <div id="gridLayout" class="layout" style="margin-top:16px">
       <!-- Sidebar -->
       <aside class="sidebar">
-        <div class="controls-inline">
-          <button id="assetsToggleInside" class="icon-btn" title="Hide assets">☰</button>
+        <div class="panel-header">
+          <h3 class="panel-title">Asset classes</h3>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button id="assetsToggleInside" class="icon-btn" title="Hide assets">☰</button>
+            <span id="newListLink" class="muted" style="cursor:pointer;">+ New list</span>
+          </div>
         </div>
-        <h3>Asset classes</h3>
         <div id="sidebar"></div>
       </aside>
 
-      <!-- Symbol list -->
+      <!-- List -->
       <section class="list">
         <div class="list-header">
-          <div class="controls">
-            <strong id="listTitle">Symbols</strong>
-            <span class="pill" id="countPill">0</span>
-          </div>
+          <div class="controls"><strong id="listTitle">Symbols</strong><span class="muted" id="countPill" style="margin-left:8px;">0</span></div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <div class="search"><input id="search" type="text" placeholder="Global search (e.g., NESN, VT, GC1!)"/></div>
+            <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SOLUSDT, VT, EURCHF)"/></div>
             <button id="listToggle" class="icon-btn" title="Hide list">☰</button>
           </div>
         </div>
         <div id="symbolList"></div>
       </section>
 
-      <!-- Advanced chart -->
+      <!-- Chart -->
       <section class="card">
         <div class="controls" style="justify-content:space-between; align-items:center; margin-bottom:8px;">
           <div class="controls">
@@ -177,53 +133,37 @@
           </div>
         </div>
         <div id="adv-host" style="height:620px;"></div>
-        <p class="muted">Click a symbol to load the chart. Use ★ to add/remove favorites.</p>
+        <p class="muted">Click a symbol to load the chart. Use ★ favorites, ＋ add to list, 🔔 set alert.</p>
       </section>
     </div>
 
-    <!-- Floating show buttons -->
     <button id="assetsShowFloating" class="floating-btn" title="Show assets">☰</button>
     <button id="listShowFloating" class="floating-btn" title="Show list">☰</button>
 
-    <!-- First-visit toast -->
-    <div id="firstToast" class="toast">Tip: use ☰ to hide/show panels. <button id="toastOk">Got it</button></div>
+    <div id="firstToast" class="card" style="position:fixed; left:50%; transform:translateX(-50%); bottom:18px; display:none; padding:10px 14px; border-radius:999px;">Tip: use ☰ to hide/show panels. <button id="toastOk" class="btn" style="margin-left:8px;">Got it</button></div>
   </main>
 
-  <footer>GPT - Great Portfolio Tracer</footer>
+  <!-- Settings Modal -->
+  <div id="backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,.4); display:none;"></div>
+  <div id="settingsModal" class="card" style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:520px; max-width:90vw; display:none;">
+    <h3>Settings</h3>
+    <label style="display:block; font-weight:700; margin-top:10px;" for="alphaKey">Alpha Vantage API key (optional)</label>
+    <input id="alphaKey" type="text" placeholder="Enter your API key" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text);"/>
+    <label style="display:block; font-weight:700; margin-top:10px;" for="pollSec">Polling interval (seconds)</label>
+    <input id="pollSec" type="number" min="10" value="30" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text);"/>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px;">
+      <button id="settingsCancel" class="btn">Cancel</button>
+      <button id="settingsSave" class="btn">Save</button>
+    </div>
+    <p class="muted">Crypto alerts work out-of-the-box via Binance. Stocks/ETFs/FX require an Alpha Vantage key.</p>
+  </div>
 
-  <script>
-    // ====== Data ======
-    const TICKER_CFG = {
-      light: {
+  <footer style="text-align:center; color:#66758f; padding:16px; border-top:1px solid var(--border); margin-top:24px;">GPT - Great Portfolio Tracer</footer>
+
+<script>
+  // ====== Config data ======
+  const TICKER_CFG = { light: {
   "symbols": [
-    {
-      "proName": "NASDAQ:NVDA",
-      "title": "NVDA"
-    },
-    {
-      "proName": "NASDAQ:MSFT",
-      "title": "MSFT"
-    },
-    {
-      "proName": "NASDAQ:AAPL",
-      "title": "AAPL"
-    },
-    {
-      "proName": "NASDAQ:AMZN",
-      "title": "AMZN"
-    },
-    {
-      "proName": "SIX:NESN",
-      "title": "NESN"
-    },
-    {
-      "proName": "SIX:ROG",
-      "title": "ROG"
-    },
-    {
-      "proName": "SIX:NOVN",
-      "title": "NOVN"
-    },
     {
       "proName": "BINANCE:BTCUSDT",
       "title": "BTCUSDT"
@@ -233,20 +173,20 @@
       "title": "ETHUSDT"
     },
     {
-      "proName": "AMEX:SPY",
-      "title": "SPY"
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
     },
     {
-      "proName": "AMEX:VOO",
-      "title": "VOO"
+      "proName": "AMEX:VT",
+      "title": "VT"
     },
     {
-      "proName": "COMEX:GC1!",
-      "title": "GC1!"
+      "proName": "SIX:NESN",
+      "title": "NESN"
     },
     {
-      "proName": "NYMEX:CL1!",
-      "title": "CL1!"
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
     },
     {
       "proName": "OANDA:EURCHF",
@@ -258,37 +198,8 @@
   "displayMode": "adaptive",
   "colorTheme": "light",
   "locale": "en"
-},
-      dark: {
+}, dark: {
   "symbols": [
-    {
-      "proName": "NASDAQ:NVDA",
-      "title": "NVDA"
-    },
-    {
-      "proName": "NASDAQ:MSFT",
-      "title": "MSFT"
-    },
-    {
-      "proName": "NASDAQ:AAPL",
-      "title": "AAPL"
-    },
-    {
-      "proName": "NASDAQ:AMZN",
-      "title": "AMZN"
-    },
-    {
-      "proName": "SIX:NESN",
-      "title": "NESN"
-    },
-    {
-      "proName": "SIX:ROG",
-      "title": "ROG"
-    },
-    {
-      "proName": "SIX:NOVN",
-      "title": "NOVN"
-    },
     {
       "proName": "BINANCE:BTCUSDT",
       "title": "BTCUSDT"
@@ -298,20 +209,20 @@
       "title": "ETHUSDT"
     },
     {
-      "proName": "AMEX:SPY",
-      "title": "SPY"
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
     },
     {
-      "proName": "AMEX:VOO",
-      "title": "VOO"
+      "proName": "AMEX:VT",
+      "title": "VT"
     },
     {
-      "proName": "COMEX:GC1!",
-      "title": "GC1!"
+      "proName": "SIX:NESN",
+      "title": "NESN"
     },
     {
-      "proName": "NYMEX:CL1!",
-      "title": "CL1!"
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
     },
     {
       "proName": "OANDA:EURCHF",
@@ -323,325 +234,380 @@
   "displayMode": "adaptive",
   "colorTheme": "dark",
   "locale": "en"
-}
-    };
-    const CATALOG = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}, {"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}, {"s": "SIX:SREN", "d": "SREN \u2014 Swiss Re"}, {"s": "SIX:GIVN", "d": "GIVN \u2014 Givaudan"}, {"s": "SIX:LONN", "d": "LONN \u2014 Lonza Group"}, {"s": "SIX:SIKA", "d": "SIKA \u2014 Sika"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "KRAKEN:USDTUSD", "d": "USDTUSD \u2014 Tether (USD)"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "AMEX:IVV", "d": "IVV \u2014 iShares Core S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ (Nasdaq-100)"}, {"s": "AMEX:IWM", "d": "IWM \u2014 iShares Russell 2000"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "bonds": {"label": "Bonds", "symbols": [{"s": "AMEX:AGG", "d": "AGG \u2014 iShares Core U.S. Aggregate Bond"}, {"s": "AMEX:TLT", "d": "TLT \u2014 iShares 20+ Year Treasury"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "indices": {"label": "Indices", "groups": {"us_via_etf": {"label": "US via ETFs", "symbols": [{"s": "AMEX:SPY", "d": "S&P 500 (via SPY)"}, {"s": "NASDAQ:QQQ", "d": "Nasdaq-100 (via QQQ)"}, {"s": "AMEX:DIA", "d": "Dow Jones (via DIA)"}, {"s": "AMEX:IWM", "d": "Russell 2000 (via IWM)"}, {"s": "TVC:VIX", "d": "VIX \u2014 Volatility Index"}]}}}, "fx": {"label": "FX", "groups": {"majors": {"label": "Majors", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:GBPUSD", "d": "GBPUSD \u2014 British Pound / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:USDJPY", "d": "USDJPY \u2014 US Dollar / Japanese Yen"}, {"s": "OANDA:AUDUSD", "d": "AUDUSD \u2014 Australian Dollar / US Dollar"}, {"s": "OANDA:USDCAD", "d": "USDCAD \u2014 US Dollar / Canadian Dollar"}]}, "chf_pairs": {"label": "CHF pairs", "symbols": [{"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}, {"s": "OANDA:CHFJPY", "d": "CHFJPY \u2014 Swiss Franc / Japanese Yen"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI (Front)"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas (Front)"}, {"s": "ICEEUR:BRN1!", "d": "BRN1! \u2014 Brent Crude (Front)"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures (Front)"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures (Front)"}, {"s": "NYMEX:PL1!", "d": "PL1! \u2014 Platinum Futures (Front)"}, {"s": "NYMEX:PA1!", "d": "PA1! \u2014 Palladium Futures (Front)"}]}, "base": {"label": "Base Metals", "symbols": [{"s": "LME:CMCU", "d": "CMCU \u2014 Copper (LME Cash)"}, {"s": "LME:CMAL", "d": "CMAL \u2014 Aluminium (LME Cash)"}, {"s": "LME:CMPB", "d": "CMPB \u2014 Lead (LME Cash)"}, {"s": "LME:CMNI", "d": "CMNI \u2014 Nickel (LME Cash)"}]}, "agri": {"label": "Agriculture", "symbols": [{"s": "CBOT:ZC1!", "d": "ZC1! \u2014 Corn Futures (Front)"}, {"s": "CBOT:ZW1!", "d": "ZW1! \u2014 Wheat Futures (Front)"}, {"s": "ICEUS:SB1!", "d": "SB1! \u2014 Sugar No.11 (Front)"}, {"s": "ICEUS:KC1!", "d": "KC1! \u2014 Coffee (Front)"}]}}}};
+} };
+  const CATALOG_BASE = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "mylists": {"label": "My Lists", "groups": {}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume (Binance)", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:XRPUSDT", "d": "XRPUSDT \u2014 XRP"}, {"s": "BINANCE:DOGEUSDT", "d": "DOGEUSDT \u2014 Dogecoin"}, {"s": "BINANCE:TONUSDT", "d": "TONUSDT \u2014 Toncoin"}, {"s": "BINANCE:ADAUSDT", "d": "ADAUSDT \u2014 Cardano"}, {"s": "BINANCE:TRXUSDT", "d": "TRXUSDT \u2014 TRON"}, {"s": "BINANCE:AVAXUSDT", "d": "AVAXUSDT \u2014 Avalanche"}, {"s": "BINANCE:LINKUSDT", "d": "LINKUSDT \u2014 Chainlink"}, {"s": "BINANCE:LTCUSDT", "d": "LTCUSDT \u2014 Litecoin"}, {"s": "BINANCE:SHIBUSDT", "d": "SHIBUSDT \u2014 Shiba Inu"}, {"s": "BINANCE:NEARUSDT", "d": "NEARUSDT \u2014 NEAR"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "fx": {"label": "FX", "groups": {"majors_chf": {"label": "Majors & CHF", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures"}]}}}};
 
-    function flattenAllSymbols() {
-      const arr = [];
-      Object.values(CATALOG).forEach(asset => {
-        Object.values(asset.groups).forEach(g => {
-          g.symbols.forEach(x => arr.push({ s: x.s, d: x.d }));
-        });
-      });
-      const seen = new Set();
-      return arr.filter(x => (seen.has(x.s) ? false : (seen.add(x.s), true)));
-    }
-    const ALL_SYMBOLS = flattenAllSymbols();
+  function safeJSON(s) { try { return JSON.parse(s||''); } catch(e) { return null; } }
 
-    // ====== Theme ======
-    const themeBtn = document.getElementById('themeToggle');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeLabel = document.getElementById('themeLabel');
-    let theme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-    function updateThemeIcon() {
-      if (theme === 'dark') {
-        themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
-        themeLabel.textContent = 'Dark';
-      } else {
-        themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>';
-        themeLabel.textContent = 'Light';
-      }
-    }
-    updateThemeIcon();
-    themeBtn.addEventListener('click', () => {
-      theme = (theme === 'light') ? 'dark' : 'light';
-      localStorage.setItem('theme', theme);
-      document.documentElement.setAttribute('data-theme', theme);
-      updateThemeIcon();
-      renderTicker();
-      renderAdvanced();
-    });
+  const store = {
+    theme: localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'),
+    sidebarCollapsed: localStorage.getItem('sidebarCollapsed')==='true',
+    listCollapsed: localStorage.getItem('listCollapsed')==='true',
+    favorites: safeJSON(localStorage.getItem('favorites')) || [],
+    mylists: safeJSON(localStorage.getItem('mylists')) || {}, // {id:{label, symbols:[]}}
+    lastSymbol: localStorage.getItem('lastSymbol') || null,
+    interval: localStorage.getItem('interval') || 'D',
+    range: localStorage.getItem('range') || '12M',
+    asset: localStorage.getItem('asset') || 'crypto',
+    group: localStorage.getItem('group') || 'top_volume',
+    alerts: safeJSON(localStorage.getItem('alerts')) || [],
+    alphaKey: localStorage.getItem('alphaKey') || '',
+    pollSec: parseInt(localStorage.getItem('pollSec') || '30', 10),
+  };
 
-    // ====== Header Help ======
-    const helpBtn = document.getElementById('helpBtn');
-    const helpPop = document.getElementById('helpPopover');
-    let helpOpen = false;
-    helpBtn.addEventListener('click', () => {
-      helpOpen = !helpOpen;
-      helpPop.style.display = helpOpen ? 'block' : 'none';
-    });
-    document.addEventListener('click', (e) => {
-      if (helpOpen && !helpPop.contains(e.target) && e.target !== helpBtn) {
-        helpOpen = false; helpPop.style.display = 'none';
-      }
-    });
+  function buildCatalog() {
+    const C = JSON.parse(JSON.stringify(CATALOG_BASE));
+    const dyn = {};
+    Object.entries(store.mylists).forEach(([id,obj]) => dyn[id] = { label: obj.label, symbols: obj.symbols||[] });
+    C.mylists.groups = dyn;
+    return C;
+  }
+  let CATALOG = buildCatalog();
 
-    // ====== First-visit toast ======
-    const firstToast = document.getElementById('firstToast');
-    const toastOk = document.getElementById('toastOk');
-    if (!localStorage.getItem('helpSeen')) {
-      firstToast.style.display = 'inline-flex';
-    }
-    toastOk.addEventListener('click', () => {
-      localStorage.setItem('helpSeen', 'true');
-      firstToast.style.display = 'none';
-    });
+  // ====== Theme & header popovers ======
+  document.documentElement.setAttribute('data-theme', store.theme);
+  const themeBtn = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+  function updateTheme() { themeLabel.textContent = store.theme==='dark'?'Dark':'Light'; themeIcon.textContent = store.theme==='dark'?'🌙':'☀'; }
+  updateTheme();
+  themeBtn.addEventListener('click', ()=>{ store.theme = store.theme==='light'?'dark':'light'; localStorage.setItem('theme', store.theme); document.documentElement.setAttribute('data-theme', store.theme); updateTheme(); renderTicker(); renderAdvanced(); });
 
-    // ====== Ticker ======
-    const tickerHost = document.getElementById('ticker-host');
-    function renderTicker() {
-      tickerHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
-      script.async = true;
-      script.innerHTML = JSON.stringify(TICKER_CFG[theme], null, 2);
-      tickerHost.querySelector('.tradingview-widget-container').appendChild(script);
-    }
-    renderTicker();
+  function togglePopover(btn, pop) { let open=false; btn.addEventListener('click',(e)=>{ e.stopPropagation(); open=!open; pop.style.display=open?'block':'none'; if(pop.id==='alertsPopover') renderAlertsList(); }); document.addEventListener('click',(e)=>{ if(open && !pop.contains(e.target) && e.target!==btn) { open=false; pop.style.display='none'; } }); }
+  togglePopover(document.getElementById('helpBtn'), document.getElementById('helpPopover'));
+  togglePopover(document.getElementById('alertsBtn'), document.getElementById('alertsPopover'));
 
-    // ====== Favorites store ======
-    function loadFavs() {
-      try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch (e) { return []; }
-    }
-    function saveFavs(list) {
-      localStorage.setItem('favorites', JSON.stringify(list));
-    }
-    function isFav(symbol) {
-      return loadFavs().some(x => x.s === symbol);
-    }
-    function toggleFav(item) {
-      let favs = loadFavs();
-      if (isFav(item.s)) {
-        favs = favs.filter(x => x.s !== item.s);
-      } else {
-        favs.push({ s: item.s, d: item.d || '' });
-      }
-      saveFavs(favs);
-    }
+  // ====== Ticker ======
+  function renderTicker() {
+    const host = document.getElementById('ticker-host');
+    host.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify(TICKER_CFG[store.theme], null, 2);
+    host.querySelector('.tradingview-widget-container').appendChild(script);
+  }
+  renderTicker();
 
-    // ====== Layout state & toggles ======
-    const gridLayout = document.getElementById('gridLayout');
-    const assetsToggleInside = document.getElementById('assetsToggleInside');
-    const assetsShowFloating = document.getElementById('assetsShowFloating');
-    const listToggle = document.getElementById('listToggle');
-    const listShowFloating = document.getElementById('listShowFloating');
+  // ====== Layout & toggles ======
+  const gridLayout = document.getElementById('gridLayout');
+  const assetsToggleInside = document.getElementById('assetsToggleInside');
+  const assetsShowFloating = document.getElementById('assetsShowFloating');
+  const listToggle = document.getElementById('listToggle');
+  const listShowFloating = document.getElementById('listShowFloating');
 
-    let sidebarCollapsed = (localStorage.getItem('sidebarCollapsed') === 'true');
-    let listCollapsed = (localStorage.getItem('listCollapsed') === 'true');
+  function applyLayout() {
+    gridLayout.classList.toggle('sidebar-collapsed', store.sidebarCollapsed);
+    gridLayout.classList.toggle('list-collapsed', store.listCollapsed);
+    assetsShowFloating.style.display = store.sidebarCollapsed ? 'block' : 'none';
+    listShowFloating.style.display   = store.listCollapsed   ? 'block' : 'none';
+    assetsToggleInside.title = store.sidebarCollapsed ? 'Show assets' : 'Hide assets';
+    listToggle.title         = store.listCollapsed   ? 'Show list'   : 'Hide list';
+  }
+  applyLayout();
 
-    function applyLayoutState() {
-      gridLayout.classList.toggle('sidebar-collapsed', sidebarCollapsed);
-      gridLayout.classList.toggle('list-collapsed', listCollapsed);
-      assetsShowFloating.style.display = sidebarCollapsed ? 'block' : 'none';
-      listShowFloating.style.display = listCollapsed ? 'block' : 'none';
-      // Update titles for tooltips
-      assetsToggleInside.title = sidebarCollapsed ? 'Show assets' : 'Hide assets';
-      listToggle.title = listCollapsed ? 'Show list' : 'Hide list';
-    }
-    applyLayoutState();
+  assetsToggleInside.addEventListener('click', ()=>{ store.sidebarCollapsed=!store.sidebarCollapsed; localStorage.setItem('sidebarCollapsed', store.sidebarCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
+  assetsShowFloating.addEventListener('click', ()=>{ store.sidebarCollapsed=false; localStorage.setItem('sidebarCollapsed','false'); applyLayout(); setTimeout(renderAdvanced,60); });
+  listToggle.addEventListener('click', ()=>{ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
+  listShowFloating.addEventListener('click', ()=>{ store.listCollapsed=false; localStorage.setItem('listCollapsed','false'); applyLayout(); setTimeout(renderAdvanced,60); });
 
-    assetsToggleInside.addEventListener('click', () => {
-      sidebarCollapsed = !sidebarCollapsed;
-      localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed));
-      applyLayoutState();
-      setTimeout(renderAdvanced, 60);
-    });
-    assetsShowFloating.addEventListener('click', () => {
-      sidebarCollapsed = false;
-      localStorage.setItem('sidebarCollapsed', 'false');
-      applyLayoutState();
-      setTimeout(renderAdvanced, 60);
-    });
+  // ====== Sidebar build (with My Lists) ======
+  const sidebar = document.getElementById('sidebar');
+  const newListLink = document.getElementById('newListLink');
+  function uid(){ return Math.random().toString(36).slice(2,9); }
+  function persistLists(){ localStorage.setItem('mylists', JSON.stringify(store.mylists)); }
+  function rebuildCatalog(){ CATALOG = buildCatalog(); ALL_SYMBOLS = flattenAllSymbols(); }
+  function persistAG(){ localStorage.setItem('asset', store.asset); localStorage.setItem('group', store.group); }
 
-    listToggle.addEventListener('click', () => {
-      listCollapsed = !listCollapsed;
-      localStorage.setItem('listCollapsed', String(listCollapsed));
-      applyLayoutState();
-      setTimeout(renderAdvanced, 60);
-    });
-    listShowFloating.addEventListener('click', () => {
-      listCollapsed = false;
-      localStorage.setItem('listCollapsed', 'false');
-      applyLayoutState();
-      setTimeout(renderAdvanced, 60);
-    });
+  newListLink.addEventListener('click', ()=>{
+    const name = prompt('New list name:'); if(!name) return;
+    const id=uid(); store.mylists[id]={label:name, symbols:[]}; persistLists(); rebuildCatalog(); renderSidebar();
+    store.asset='mylists'; store.group=id; persistAG(); renderList();
+  });
 
-    // ====== Sidebar (categories) ======
-    const sidebar = document.getElementById('sidebar');
-    let currentAsset = localStorage.getItem('asset') || 'equities';
-    let currentGroup = localStorage.getItem('group') || 'us_top';
-
-    function renderSidebar() {
-      sidebar.innerHTML = '';
-      Object.entries(CATALOG).forEach(([assetId, asset]) => {
-        const group = document.createElement('div');
-        group.className = 'nav-group';
-        const title = document.createElement('div');
-        title.style.cssText = 'font-weight:800; margin:8px 0 6px; font-size:13px; text-transform:uppercase; opacity:.8;';
-        title.textContent = asset.label;
-        group.appendChild(title);
-        Object.entries(asset.groups).forEach(([groupId, g]) => {
-          const btn = document.createElement('button');
-          btn.className = 'nav-item' + ((assetId===currentAsset && groupId===currentGroup) ? ' active' : '');
-          btn.textContent = g.label;
-          btn.addEventListener('click', () => {
-            currentAsset = assetId;
-            currentGroup = groupId;
-            localStorage.setItem('asset', currentAsset);
-            localStorage.setItem('group', currentGroup);
-            renderSidebar();
-            renderList();
+  function renderSidebar(){
+    sidebar.innerHTML='';
+    Object.entries(CATALOG).forEach(([assetId, asset])=>{
+      const block=document.createElement('div'); block.className='nav-group';
+      const t=document.createElement('div'); t.className='group-title'; t.textContent=asset.label; block.appendChild(t);
+      Object.entries(asset.groups).forEach(([groupId,g])=>{
+        const btn=document.createElement('div'); btn.className='nav-item'+((assetId===store.asset && groupId===store.group)?' active':'');
+        btn.textContent=g.label;
+        if(assetId==='mylists'){
+          const edit=document.createElement('span'); edit.className='edit'; edit.textContent='⋮'; edit.title='Edit';
+          edit.addEventListener('click',(e)=>{
+            e.stopPropagation();
+            const act=prompt('Type: rename | delete','rename'); if(!act) return;
+            if(act==='rename'){ const nn=prompt('New name:', g.label); if(!nn) return; store.mylists[groupId].label=nn; persistLists(); rebuildCatalog(); renderSidebar(); }
+            else if(act==='delete'){ if(confirm('Delete this list?')){ delete store.mylists[groupId]; persistLists(); rebuildCatalog(); renderSidebar();
+              if(store.asset==='mylists' && store.group===groupId){ store.asset='crypto'; store.group='top_volume'; persistAG(); renderList(); }
+            } }
           });
-          group.appendChild(btn);
-        });
-        sidebar.appendChild(group);
+          btn.appendChild(edit);
+        }
+        btn.addEventListener('click',()=>{ store.asset=assetId; store.group=groupId; persistAG(); renderSidebar(); renderList(); });
+        block.appendChild(btn);
       });
+      sidebar.appendChild(block);
+    });
+  }
+  renderSidebar();
+
+  // ====== List + search ======
+  const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList'); const searchInput=document.getElementById('search');
+  function flattenAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d}))); }); const seen=new Set(); return arr.filter(x=> seen.has(x.s)?false:(seen.add(x.s),true)); }
+  let ALL_SYMBOLS = flattenAllSymbols();
+
+  function getGroupSymbols(){ if(store.asset==='favorites') return store.favorites; if(store.asset==='mylists') return (store.mylists[store.group]?.symbols)||[]; return CATALOG[store.asset].groups[store.group].symbols; }
+  function getGlobalResults(q){ const qq=q.toLowerCase(); return ALL_SYMBOLS.filter(x=>x.s.toLowerCase().includes(qq)||(x.d||'').toLowerCase().includes(qq)); }
+  function isFav(sym){ return store.favorites.some(x=>x.s===sym); }
+  function saveFavs(){ localStorage.setItem('favorites', JSON.stringify(store.favorites)); }
+
+  function addToMyList(obj){
+    const keys=Object.keys(store.mylists); let target=keys[0];
+    if(keys.length===0){ const name=prompt('Create a new list name:'); if(!name) return; const id=uid(); store.mylists[id]={label:name, symbols:[]}; target=id; }
+    else { const names=keys.map(k=>store.mylists[k].label); const choice=prompt('Add to which list?\n'+names.map((n,i)=>(i+1)+'. '+n).join('\n'),'1'); if(!choice) return; const idx=parseInt(choice,10)-1; if(isNaN(idx)||idx<0||idx>=keys.length) return; target=keys[idx]; }
+    const arr=store.mylists[target].symbols; if(!arr.some(x=>x.s===obj.s)) arr.push(obj);
+    persistLists(); rebuildCatalog(); renderSidebar(); if(store.asset==='mylists'&&store.group===target) renderList();
+    toast('Added to "'+store.mylists[target].label+'"');
+  }
+
+  function renderList(){
+    const q=(searchInput.value||'').trim(); let symbols, title;
+    if(q){ symbols=getGlobalResults(q); title='Search results'; }
+    else if(store.asset==='favorites'){ symbols=getGroupSymbols(); title='My Favorites'; }
+    else if(store.asset==='mylists'){ symbols=getGroupSymbols(); title=store.mylists[store.group]?.label || 'My Lists'; }
+    else { const meta=CATALOG[store.asset].groups[store.group]; symbols=meta.symbols; title=meta.label; }
+    listTitle.textContent=title; countPill.textContent=symbols.length+' items'; listHost.innerHTML='';
+    symbols.forEach(obj=>{
+      const row=document.createElement('div'); row.className='row';
+      const left=document.createElement('div'); left.className='left';
+      const sym=document.createElement('div'); sym.className='symbol'; sym.textContent=obj.s;
+      const desc=document.createElement('div'); desc.className='muted'; desc.textContent=obj.d||'';
+      left.appendChild(sym); left.appendChild(desc);
+      const right=document.createElement('div'); right.style.display='flex'; right.style.alignItems='center';
+      const plus=document.createElement('span'); plus.className='plus'; plus.textContent='＋'; plus.title='Add to My Lists'; plus.addEventListener('click',(e)=>{ e.stopPropagation(); addToMyList(obj); });
+      const bell=document.createElement('span'); bell.className='bell'; bell.textContent='🔔'; bell.title='Set alert'; bell.addEventListener('click',(e)=>{ e.stopPropagation(); createAlertFlow(obj); });
+      const star=document.createElement('span'); star.className='star'+(isFav(obj.s)?' fav':''); star.textContent=isFav(obj.s)?'★':'☆'; star.title=isFav(obj.s)?'Remove favorite':'Add favorite';
+      star.addEventListener('click',(e)=>{ e.stopPropagation(); if(isFav(obj.s)) store.favorites=store.favorites.filter(x=>x.s!==obj.s); else store.favorites.push(obj); saveFavs(); star.classList.toggle('fav'); star.textContent=star.classList.contains('fav')?'★':'☆'; if(store.asset==='favorites'&&!star.classList.contains('fav')) renderList(); });
+      const arrow=document.createElement('div'); arrow.className='muted'; arrow.style.marginLeft='8px'; arrow.textContent='➜';
+      right.appendChild(plus); right.appendChild(bell); right.appendChild(star); right.appendChild(arrow);
+      row.appendChild(left); row.appendChild(right);
+      row.addEventListener('click',()=>{ store.lastSymbol=obj.s; localStorage.setItem('lastSymbol', store.lastSymbol); renderAdvanced(); });
+      listHost.appendChild(row);
+    });
+  }
+  searchInput.addEventListener('input', ()=>renderList());
+  renderList();
+
+  // ====== Advanced chart ======
+  const advHost = document.getElementById('adv-host');
+  const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
+  const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
+  function syncBtns(){ intButtons.forEach(b=>b.classList.toggle('active', b.dataset.int===store.interval)); rangeButtons.forEach(b=>b.classList.toggle('active', b.dataset.range===store.range)); }
+  function renderAdvanced(){
+    syncBtns();
+    advHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.async = true;
+    const cfg = {
+      autosize: true, symbol: store.lastSymbol || 'BINANCE:BTCUSDT',
+      interval: store.interval, range: store.range, timezone: 'Etc/UTC',
+      theme: store.theme, style: '1', locale: 'en',
+      allow_symbol_change: false, withdateranges: true,
+      hide_side_toolbar: false, hide_top_toolbar: false, save_image: false,
+      studies: [], calendar: false, support_host: 'https://www.tradingview.com'
+    };
+    script.innerHTML = JSON.stringify(cfg, null, 2);
+    advHost.querySelector('.tradingview-widget-container').appendChild(script);
+  }
+  intButtons.forEach(btn=>btn.addEventListener('click',()=>{ store.interval=btn.dataset.int; localStorage.setItem('interval', store.interval); renderAdvanced(); }));
+  rangeButtons.forEach(btn=>btn.addEventListener('click',()=>{ store.range=btn.dataset.range; localStorage.setItem('range', store.range); renderAdvanced(); }));
+  renderAdvanced();
+
+  // ====== Settings modal ======
+  const settingsBtn=document.getElementById('settingsBtn'); const backdrop=document.getElementById('backdrop'); const settingsModal=document.getElementById('settingsModal');
+  const alphaKeyInput=document.getElementById('alphaKey'); const pollSecInput=document.getElementById('pollSec'); const settingsSave=document.getElementById('settingsSave'); const settingsCancel=document.getElementById('settingsCancel');
+  function openModal(){ alphaKeyInput.value=store.alphaKey; pollSecInput.value=store.pollSec; backdrop.style.display='block'; settingsModal.style.display='block'; }
+  function closeModal(){ backdrop.style.display='none'; settingsModal.style.display='none'; }
+  settingsBtn.addEventListener('click', openModal); backdrop.addEventListener('click', closeModal); settingsCancel.addEventListener('click', closeModal);
+  settingsSave.addEventListener('click', ()=>{ store.alphaKey=alphaKeyInput.value.trim(); store.pollSec=Math.max(10, parseInt(pollSecInput.value||'30',10)); localStorage.setItem('alphaKey', store.alphaKey); localStorage.setItem('pollSec', String(store.pollSec)); closeModal(); toast('Settings saved'); });
+
+  // ====== Alerts ======
+  const alertsBadge=document.getElementById('alertsBadge'); const alertsList=document.getElementById('alertsList'); const clearAlerts=document.getElementById('clearAlerts');
+  function updateAlertsBadge(){ const n=store.alerts.length; alertsBadge.style.display=n>0?'inline-block':'none'; alertsBadge.textContent=n; }
+  function persistAlerts(){ localStorage.setItem('alerts', JSON.stringify(store.alerts)); updateAlertsBadge(); }
+  updateAlertsBadge();
+  clearAlerts.addEventListener('click', ()=>{ if(confirm('Clear all alerts?')) { store.alerts=[]; persistAlerts(); renderAlertsList(); } });
+  function renderAlertsList(){
+    alertsList.innerHTML='';
+    if(store.alerts.length===0){ alertsList.innerHTML='<div class="muted">No active alerts</div>'; return; }
+    store.alerts.forEach((a,idx)=>{
+      const line=document.createElement('div'); line.className='row'; line.style.padding='6px 0'; line.style.cursor='default';
+      const left=document.createElement('div'); left.textContent = a.s + ' ' + (a.dir==='above'?'≥':'≤') + ' ' + a.target + (a.source==='binance'?' (Binance)':(a.source==='alpha'?' (Alpha)':' (N/A)'));
+      const rm=document.createElement('span'); rm.className='muted'; rm.style.cursor='pointer'; rm.textContent='remove';
+      rm.addEventListener('click',()=>{ store.alerts.splice(idx,1); persistAlerts(); renderAlertsList(); });
+      line.appendChild(left); line.appendChild(rm); alertsList.appendChild(line);
+    });
+  }
+
+  function mapSymbol(sym){
+    const p=sym.split(':'), ex=p[0], code=p.slice(1).join(':');
+    if(ex==='BINANCE') return { source:'binance', url:'https://api.binance.com/api/v3/ticker/price?symbol='+code, parse:(j)=>parseFloat(j.price) };
+    if(ex==='OANDA' && code.length===6 && store.alphaKey){
+      const from=code.slice(0,3), to=code.slice(3);
+      return { source:'alpha', url:'https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency='+from+'&to_currency='+to+'&apikey='+store.alphaKey, parse:(j)=>parseFloat(j['Realtime Currency Exchange Rate']&&j['Realtime Currency Exchange Rate']['5. Exchange Rate']) };
     }
-    renderSidebar();
+    // Stocks/ETFs via Alpha Vantage GLOBAL_QUOTE (SIX mapped to .SW)
+    let ticker=code; if(ex==='SIX') ticker=code+'.SW';
+    if(store.alphaKey) return { source:'alpha', url:'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol='+encodeURIComponent(ticker)+'&apikey='+store.alphaKey, parse:(j)=>parseFloat(j['Global Quote']&&j['Global Quote']['05. price']) };
+    return { source:null };
+  }
 
-    // ====== Symbol list + GLOBAL SEARCH ======
-    const listTitle = document.getElementById('listTitle');
-    const countPill = document.getElementById('countPill');
-    const listHost = document.getElementById('symbolList');
-    const searchInput = document.getElementById('search');
+  function createAlertFlow(obj){
+    const when = prompt('Alert when price is (above | below):','above'); if(!when) return;
+    const t = parseFloat(prompt('Target price:','')); if(!isFinite(t)) return;
+    const map = mapSymbol(obj.s); if(!map.source) alert('This symbol may not be supported for live polling unless you add an API key in Settings.');
+    const a={ id:Math.random().toString(36).slice(2,9), s:obj.s, d:obj.d||'', target:t, dir:(when.toLowerCase()==='below'?'below':'above'), source:map.source, map:map, createdAt:Date.now() };
+    store.alerts.push(a); persistAlerts(); renderAlertsList(); requestNotify(); toast('Alert added for '+obj.s);
+  }
 
-    function getGroupSymbols() {
-      if (currentAsset === 'favorites') {
-        return loadFavs();
-      }
-      return CATALOG[currentAsset].groups[currentGroup].symbols;
+  function requestNotify(){ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }
+  function notify(title, body){ if('Notification' in window && Notification.permission==='granted') new Notification(title,{ body }); else toast(title+': '+body); }
+
+  async function pollAlerts(){
+    if(store.alerts.length===0) return;
+    for(const a of [...store.alerts]){
+      try{
+        if(a.source==='binance'){
+          const r=await fetch(a.map.url); if(!r.ok) continue; const j=await r.json(); const price=a.map.parse(j); if(!isFinite(price)) continue;
+          if((a.dir==='above' && price>=a.target) || (a.dir==='below' && price<=a.target)){ notify('Alert: '+a.s, 'Price hit '+a.dir+' '+a.target+' (now '+price+')'); store.alerts=store.alerts.filter(x=>x.id!==a.id); persistAlerts(); renderAlertsList(); }
+        } else if(a.source==='alpha' && store.alphaKey){
+          const r=await fetch(a.map.url); if(!r.ok) continue; const j=await r.json(); const price=a.map.parse(j); if(!isFinite(price)) continue;
+          if((a.dir==='above' && price>=a.target) || (a.dir==='below' && price<=a.target)){ notify('Alert: '+a.s, 'Price hit '+a.dir+' '+a.target+' (now '+price+')'); store.alerts=store.alerts.filter(x=>x.id!==a.id); persistAlerts(); renderAlertsList(); }
+        }
+      }catch(e){}
     }
-    function getGlobalResults(q) {
-      const qq = q.toLowerCase();
-      return ALL_SYMBOLS.filter(x => x.s.toLowerCase().includes(qq) || (x.d||'').toLowerCase().includes(qq));
-    }
+  }
+  setInterval(pollAlerts, Math.max(10, store.pollSec)*1000);
 
-    function renderList() {
-      const q = (searchInput.value || '').trim();
-      let symbols, title;
-      if (q.length > 0) {
-        symbols = getGlobalResults(q);
-        title = 'Search results';
-      } else if (currentAsset === 'favorites') {
-        symbols = getGroupSymbols();
-        title = 'My Favorites';
-      } else {
-        const meta = CATALOG[currentAsset].groups[currentGroup];
-        symbols = meta.symbols;
-        title = meta.label;
-      }
-      listTitle.textContent = title;
-      countPill.textContent = symbols.length + ' items';
-      listHost.innerHTML = '';
-
-      symbols.forEach(obj => {
-        const row = document.createElement('div');
-        row.className = 'row';
-        const left = document.createElement('div');
-        left.className = 'left';
-        const sym = document.createElement('div');
-        sym.className = 'symbol';
-        sym.textContent = obj.s;
-        const desc = document.createElement('div');
-        desc.className = 'muted';
-        desc.textContent = obj.d || '';
-        left.appendChild(sym); left.appendChild(desc);
-
-        const right = document.createElement('div');
-        right.style.display = 'flex';
-        right.style.alignItems = 'center';
-
-        const star = document.createElement('span');
-        star.className = 'star' + (isFav(obj.s) ? ' fav' : '');
-        star.textContent = isFav(obj.s) ? '★' : '☆';
-        star.title = isFav(obj.s) ? 'Remove from favorites' : 'Add to favorites';
-        star.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleFav(obj);
-          star.classList.toggle('fav');
-          star.textContent = star.classList.contains('fav') ? '★' : '☆';
-          star.title = star.classList.contains('fav') ? 'Remove from favorites' : 'Add to favorites';
-          if (currentAsset === 'favorites' && !star.classList.contains('fav')) {
-            renderList();
-          }
-        });
-
-        const arrow = document.createElement('div');
-        arrow.className = 'muted';
-        arrow.style.marginLeft = '8px';
-        arrow.textContent = '➜';
-
-        right.appendChild(star); right.appendChild(arrow);
-
-        row.appendChild(left); row.appendChild(right);
-
-        row.addEventListener('click', () => {
-          advSymbol = obj.s;
-          localStorage.setItem('lastSymbol', advSymbol);
-          renderAdvanced();
-        });
-        listHost.appendChild(row);
-      });
-    }
-    searchInput.addEventListener('input', () => renderList());
-    renderList();
-
-    // ====== Advanced chart ======
-    const advHost = document.getElementById('adv-host');
+  // ====== Toast helper ======
+  const firstToast=document.getElementById('firstToast'); const toastOk=document.getElementById('toastOk');
+  if(!localStorage.getItem('helpSeen')) firstToast.style.display='inline-flex';
+  if(toastOk) toastOk.addEventListener('click', ()=>{ localStorage.setItem('helpSeen','true'); firstToast.style.display='none'; });
+  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color='#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
+</script>
+<script>
+  // Advanced chart loader (kept separate to ensure DOM is ready)
+  (function(){
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
     const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
-    let advSymbol = localStorage.getItem('lastSymbol') || getGroupSymbols()[0]?.s || 'SIX:NESN';
-    let advInterval = localStorage.getItem('interval') || 'D';
-    let advRange = localStorage.getItem('range') || '12M';
-
-    function syncActiveButtons() {
-      intButtons.forEach(b => b.classList.toggle('active', b.dataset.int === advInterval));
-      rangeButtons.forEach(b => b.classList.toggle('active', b.dataset.range === advRange));
-    }
-    syncActiveButtons();
-
-    function renderAdvanced() {
-      syncActiveButtons();
+    function syncBtns(){ const interval=localStorage.getItem('interval')||'D'; const range=localStorage.getItem('range')||'12M'; intButtons.forEach(b=>b.classList.toggle('active', b.dataset.int===interval)); rangeButtons.forEach(b=>b.classList.toggle('active', b.dataset.range===range)); }
+    window.renderAdvanced = function(){
+      syncBtns();
+      const advHost = document.getElementById('adv-host');
       advHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-      script.async = true;
+      const s = document.createElement('script');
+      s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      s.async = true;
       const cfg = {
-        autosize: true,
-        symbol: advSymbol,
-        interval: advInterval,
-        range: advRange,
-        timezone: 'Etc/UTC',
-        theme: theme,
-        style: '1',
-        locale: 'en',
-        allow_symbol_change: false,
-        withdateranges: true,
-        hide_side_toolbar: false,
-        hide_top_toolbar: false,
-        save_image: false,
-        studies: [],
-        calendar: false,
-        support_host: 'https://www.tradingview.com'
+        autosize:true, symbol: localStorage.getItem('lastSymbol') || 'BINANCE:BTCUSDT',
+        interval: localStorage.getItem('interval') || 'D',
+        range: localStorage.getItem('range') || '12M',
+        timezone:'Etc/UTC', theme: localStorage.getItem('theme') || 'light', style:'1', locale:'en',
+        allow_symbol_change:false, withdateranges:true, hide_side_toolbar:false, hide_top_toolbar:false, save_image:false, studies:[], calendar:false,
+        support_host:'https://www.tradingview.com'
       };
-      script.innerHTML = JSON.stringify(cfg, null, 2);
-      advHost.querySelector('.tradingview-widget-container').appendChild(script);
+      s.innerHTML = JSON.stringify(cfg, null, 2);
+      advHost.querySelector('.tradingview-widget-container').appendChild(s);
+    };
+    intButtons.forEach(btn=>btn.addEventListener('click',()=>{ localStorage.setItem('interval', btn.dataset.int); window.renderAdvanced(); }));
+    rangeButtons.forEach(btn=>btn.addEventListener('click',()=>{ localStorage.setItem('range', btn.dataset.range); window.renderAdvanced(); }));
+    window.renderAdvanced();
+  })();
+</script>
+<script>
+  // Ensure ticker renders with correct theme initially
+  (function(){
+    const host=document.getElementById('ticker-host');
+    const theme=(localStorage.getItem('theme')||'light');
+    const cfg=theme==='dark'?{
+  "symbols": [
+    {
+      "proName": "BINANCE:BTCUSDT",
+      "title": "BTCUSDT"
+    },
+    {
+      "proName": "BINANCE:ETHUSDT",
+      "title": "ETHUSDT"
+    },
+    {
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
+    },
+    {
+      "proName": "AMEX:VT",
+      "title": "VT"
+    },
+    {
+      "proName": "SIX:NESN",
+      "title": "NESN"
+    },
+    {
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
+    },
+    {
+      "proName": "OANDA:EURCHF",
+      "title": "EURCHF"
     }
-    intButtons.forEach(btn => btn.addEventListener('click', () => {
-      advInterval = btn.dataset.int;
-      localStorage.setItem('interval', advInterval);
-      renderAdvanced();
-    }));
-    rangeButtons.forEach(btn => btn.addEventListener('click', () => {
-      advRange = btn.dataset.range;
-      localStorage.setItem('range', advRange);
-      renderAdvanced();
-    }));
-    renderAdvanced();
-  </script>
+  ],
+  "showSymbolLogo": true,
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "colorTheme": "dark",
+  "locale": "en"
+}:{
+  "symbols": [
+    {
+      "proName": "BINANCE:BTCUSDT",
+      "title": "BTCUSDT"
+    },
+    {
+      "proName": "BINANCE:ETHUSDT",
+      "title": "ETHUSDT"
+    },
+    {
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
+    },
+    {
+      "proName": "AMEX:VT",
+      "title": "VT"
+    },
+    {
+      "proName": "SIX:NESN",
+      "title": "NESN"
+    },
+    {
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
+    },
+    {
+      "proName": "OANDA:EURCHF",
+      "title": "EURCHF"
+    }
+  ],
+  "showSymbolLogo": true,
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "colorTheme": "light",
+  "locale": "en"
+};
+    host.innerHTML='<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+    const s=document.createElement('script'); s.src='https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js'; s.async=true; s.innerHTML=JSON.stringify(cfg, null, 2); host.querySelector('.tradingview-widget-container').appendChild(s);
+  })();
+</script>
 </body>
 </html>
