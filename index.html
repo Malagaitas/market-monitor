@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — collapsible sidebar, categories (Stocks, Crypto, ETFs, Indices, FX), global search, favorites, and an advanced chart."/>
+  <meta name="description" content="Great Portfolio Tracer — collapsible sidebar, collapsible list, global search, favorites, and an advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
@@ -34,23 +34,27 @@
     header { padding: 10px 16px; background: var(--brand); color: white; display:flex; align-items:center; justify-content:space-between; gap:12px; }
     .brand { display:flex; align-items:center; gap:10px; }
     .brand img { height:26px; width:auto; display:block; }
-    .controls-inline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .toggle-btn, .small-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
+    .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
                    padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
-    .toggle-btn svg, .small-btn svg { width:18px; height:18px; }
+    .toggle-btn svg { width:18px; height:18px; }
     main { max-width: 1500px; margin: 0 auto; padding: 16px; }
     .section { margin-top: 16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
     .layout { display:grid; grid-template-columns: 260px 360px 1fr; gap:16px; align-items:start; transition: grid-template-columns 200ms ease; }
-    .layout.collapsed { grid-template-columns: 0px 360px 1fr; }
+    .layout.sidebar-collapsed { grid-template-columns: 0 360px 1fr; }
+    .layout.list-collapsed { grid-template-columns: 260px 1fr; }
+    .layout.sidebar-collapsed.list-collapsed { grid-template-columns: 1fr; }
     .sidebar { background:var(--sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; overflow:hidden; }
-    .layout.collapsed .sidebar { display:none; }
+    .layout.sidebar-collapsed .sidebar { display:none; }
     .sidebar h3 { margin:4px 0 8px; font-size:14px; opacity:.9; }
+    .sidebar .controls-inline { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+    .small-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
     .nav-group { margin-bottom:10px; }
     .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text);
                  padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; }
     .nav-item.active { background: var(--brand); border-color: var(--brand); color:white; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
+    .layout.list-collapsed .list { display:none; }
     .list-header { display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--border); justify-content:space-between; }
     .search input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
@@ -64,11 +68,15 @@
     .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
     .star { font-size:18px; margin-left:8px; user-select:none; }
     .star.fav { color: var(--star); }
+    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; padding: 8px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+    #assetsShowFloating { left: 8px; display:none; }
+    #listShowFloating { right: 8px; display:none; }
     footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
     @media (max-width: 1080px) {
       .layout { grid-template-columns: 1fr; }
-      .layout.collapsed { grid-template-columns: 1fr; }
-      .layout.collapsed .sidebar { display:none; }
+      .layout.sidebar-collapsed { grid-template-columns: 1fr; }
+      .layout.list-collapsed { grid-template-columns: 1fr; }
+      .layout.sidebar-collapsed.list-collapsed { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -78,18 +86,12 @@
       <img src="logo.svg" alt="GPT logo" />
       <strong>GPT - Great Portfolio Tracer</strong>
     </div>
-    <div class="controls-inline">
-      <button id="assetsToggle" class="small-btn" title="Show/Hide Asset classes">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h12v2H3v-2zm0 5h18v2H3v-2z"/></svg>
-        <span id="assetsLabel">Hide assets</span>
-      </button>
-      <button id="themeToggle" class="toggle-btn" title="Toggle light/dark">
-        <span id="themeIcon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
-        </span>
-        <span id="themeLabel">Light</span>
-      </button>
-    </div>
+    <button id="themeToggle" class="toggle-btn" title="Toggle light/dark">
+      <span id="themeIcon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+      </span>
+      <span id="themeLabel">Light</span>
+    </button>
   </header>
 
   <main>
@@ -104,6 +106,9 @@
     <div id="gridLayout" class="section layout">
       <!-- Sidebar -->
       <aside class="sidebar">
+        <div class="controls-inline">
+          <button id="assetsToggleInside" class="small-btn" title="Show/Hide Asset classes">☰ Assets</button>
+        </div>
         <h3>Asset classes</h3>
         <div id="sidebar"></div>
       </aside>
@@ -115,7 +120,10 @@
             <strong id="listTitle">Symbols</strong>
             <span class="pill" id="countPill">0</span>
           </div>
-          <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SPY, EURUSD)"/></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SPY, EURUSD)"/></div>
+            <button id="listToggle" class="small-btn" title="Show/Hide list">Toggle list</button>
+          </div>
         </div>
         <div id="symbolList"></div>
       </section>
@@ -145,6 +153,10 @@
         <p class="muted">Click a symbol to load the chart. Use ★ to add/remove favorites.</p>
       </section>
     </div>
+
+    <!-- Floating show buttons (only visible when columns are hidden) -->
+    <button id="assetsShowFloating" class="floating-btn">☰ Assets</button>
+    <button id="listShowFloating" class="floating-btn">Show list</button>
   </main>
 
   <footer>GPT - Great Portfolio Tracer</footer>
@@ -347,25 +359,53 @@
       saveFavs(favs);
     }
 
-    // ====== Sidebar toggle (collapse/expand) ======
+    // ====== Layout state & toggles ======
     const gridLayout = document.getElementById('gridLayout');
-    const assetsToggle = document.getElementById('assetsToggle');
-    const assetsLabel = document.getElementById('assetsLabel');
+    const assetsToggleInside = document.getElementById('assetsToggleInside');
+    const assetsShowFloating = document.getElementById('assetsShowFloating');
+    const listToggle = document.getElementById('listToggle');
+    const listShowFloating = document.getElementById('listShowFloating');
+
     let sidebarCollapsed = (localStorage.getItem('sidebarCollapsed') === 'true');
-    function applySidebarState() {
-      gridLayout.classList.toggle('collapsed', sidebarCollapsed);
-      assetsLabel.textContent = sidebarCollapsed ? 'Show assets' : 'Hide assets';
+    let listCollapsed = (localStorage.getItem('listCollapsed') === 'true');
+
+    function applyLayoutState() {
+      gridLayout.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+      gridLayout.classList.toggle('list-collapsed', listCollapsed);
+      assetsShowFloating.style.display = sidebarCollapsed ? 'block' : 'none';
+      listShowFloating.style.display = listCollapsed ? 'block' : 'none';
     }
-    applySidebarState();
-    assetsToggle.addEventListener('click', () => {
+    applyLayoutState();
+
+    // Sidebar toggle (inside the sidebar)
+    assetsToggleInside.addEventListener('click', () => {
       sidebarCollapsed = !sidebarCollapsed;
       localStorage.setItem('sidebarCollapsed', String(sidebarCollapsed));
-      applySidebarState();
-      // Wait a tick for CSS layout to settle, then rerender chart to fit new size
+      applyLayoutState();
+      setTimeout(renderAdvanced, 60);
+    });
+    assetsShowFloating.addEventListener('click', () => {
+      sidebarCollapsed = false;
+      localStorage.setItem('sidebarCollapsed', 'false');
+      applyLayoutState();
       setTimeout(renderAdvanced, 60);
     });
 
-    // ====== Sidebar ======
+    // List toggle
+    listToggle.addEventListener('click', () => {
+      listCollapsed = !listCollapsed;
+      localStorage.setItem('listCollapsed', String(listCollapsed));
+      applyLayoutState();
+      setTimeout(renderAdvanced, 60);
+    });
+    listShowFloating.addEventListener('click', () => {
+      listCollapsed = false;
+      localStorage.setItem('listCollapsed', 'false');
+      applyLayoutState();
+      setTimeout(renderAdvanced, 60);
+    });
+
+    // ====== Sidebar (categories) ======
     const sidebar = document.getElementById('sidebar');
     let currentAsset = localStorage.getItem('asset') || 'equities';
     let currentGroup = localStorage.getItem('group') || 'sp_top20';
