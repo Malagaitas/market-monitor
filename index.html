@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — browse Stocks, Crypto, ETFs, Indices, FX & Commodities with favorites, global search, and an advanced chart."/>
+  <meta name="description" content="Great Portfolio Tracer — sidebar with categories, global search, favorites, and an advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
@@ -17,6 +17,7 @@
       --muted:#66758f;
       --border:#e5e8ef;
       --sidebar:#eef2ff;
+      --star:#ffb400;
     }
     [data-theme="dark"] {
       --bg:#0b0f17;
@@ -25,6 +26,7 @@
       --muted:#b6c0d1;
       --border:#24324a;
       --sidebar:#0f172a;
+      --star:#ffd166;
     }
     * { box-sizing:border-box; }
     html, body { height:100%; }
@@ -35,16 +37,13 @@
     .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
                    padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
     .toggle-btn svg { width:18px; height:18px; }
-    main { max-width: 1500px; margin: 0 auto; padding: 16px; }
+    main { max-width: 1400px; margin: 0 auto; padding: 16px; }
     .section { margin-top: 16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-    .global-search { display:flex; gap:8px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px; }
-    .global-search input { flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
-    .layout { display:grid; grid-template-columns: 260px 350px 1fr; gap:16px; align-items:start; }
+    .layout { display:grid; grid-template-columns: 260px 340px 1fr; gap:16px; align-items:start; }
     .sidebar { background:var(--sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; }
-    .sidebar h3 { margin:4px 0 10px; font-size:14px; opacity:.9; }
-    .nav-group { margin-bottom:12px; }
-    .nav-title { font-weight:800; margin:8px 0 6px; font-size:13px; text-transform:uppercase; opacity:.8; }
+    .sidebar h3 { margin:4px 0 8px; font-size:14px; opacity:.9; }
+    .nav-group { margin-bottom:10px; }
     .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text);
                  padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; }
     .nav-item.active { background: var(--brand); border-color: var(--brand); color:white; }
@@ -53,18 +52,17 @@
     .search input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text); }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
     .row:hover { background: rgba(15, 98, 254, .08); }
-    .left { display:flex; flex-direction:column; }
+    .left { display:flex; flex-direction:column; gap:3px; }
     .symbol { font-weight:700; }
     .muted { color:var(--muted); font-size:12px; }
     .pill { font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
     .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; color:var(--text); }
     .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
-    .star { width:18px; height:18px; display:inline-block; margin-left:8px; }
-    .star svg { width:18px; height:18px; fill: none; stroke: currentColor; stroke-width: 2; }
-    .star.active svg { fill: currentColor; }
+    .star { font-size:18px; margin-left:8px; user-select:none; }
+    .star.fav { color: var(--star); }
     footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
-    @media (max-width: 1100px) {
+    @media (max-width: 1080px) {
       .layout { grid-template-columns: 1fr; }
     }
   </style>
@@ -91,13 +89,6 @@
       </div>
     </div>
 
-    <!-- Global search -->
-    <div class="section global-search">
-      <strong>Global Search:</strong>
-      <input id="globalSearch" type="text" placeholder="Search across all assets (e.g., SPY, EURUSD, Bitcoin, NVIDIA)"/>
-      <span class="muted" id="globalCount"></span>
-    </div>
-
     <!-- Three-column layout -->
     <div class="section layout">
       <!-- Sidebar -->
@@ -106,14 +97,14 @@
         <div id="sidebar"></div>
       </aside>
 
-      <!-- Symbol list (current group) -->
+      <!-- Symbol list -->
       <section class="list">
         <div class="list-header">
           <div class="controls">
             <strong id="listTitle">Symbols</strong>
             <span class="pill" id="countPill">0</span>
           </div>
-          <div class="search"><input id="search" type="text" placeholder="Filter in this list"/></div>
+          <div class="search"><input id="search" type="text" placeholder="Global search (e.g., NVDA, Bitcoin)"/></div>
         </div>
         <div id="symbolList"></div>
       </section>
@@ -140,7 +131,7 @@
           </div>
         </div>
         <div id="adv-host" style="height:620px;"></div>
-        <p class="muted">Click a symbol in the middle list or a global search result to load it on the chart. Use the ★ to add/remove favorites.</p>
+        <p class="muted">Click a symbol in the middle list to load it on the chart. Click ★ to add/remove favorites.</p>
       </section>
     </div>
   </main>
@@ -211,18 +202,6 @@
     {
       "proName": "KRAKEN:USDTUSD",
       "title": "USDTUSD"
-    },
-    {
-      "proName": "AMEX:SPY",
-      "title": "SPY"
-    },
-    {
-      "proName": "NASDAQ:QQQ",
-      "title": "QQQ"
-    },
-    {
-      "proName": "FX:EURUSD",
-      "title": "EURUSD"
     }
   ],
   "showSymbolLogo": true,
@@ -292,18 +271,6 @@
     {
       "proName": "KRAKEN:USDTUSD",
       "title": "USDTUSD"
-    },
-    {
-      "proName": "AMEX:SPY",
-      "title": "SPY"
-    },
-    {
-      "proName": "NASDAQ:QQQ",
-      "title": "QQQ"
-    },
-    {
-      "proName": "FX:EURUSD",
-      "title": "EURUSD"
     }
   ],
   "showSymbolLogo": true,
@@ -313,19 +280,21 @@
   "locale": "en"
 }
     };
-    const CATALOG = {"favorites": {"label": "\u2605 Favorites", "groups": {"saved": {"label": "Saved", "symbols": []}}}, "equities": {"label": "Stocks", "groups": {"sp_top20": {"label": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}, {"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "mega_caps": {"label": "US Mega Caps", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}]}, "sector_tech": {"label": "S&P \u2014 Technology", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}]}, "sector_health": {"label": "S&P \u2014 Healthcare", "symbols": [{"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "sector_fin": {"label": "S&P \u2014 Financials", "symbols": [{"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}]}, "sector_cons": {"label": "S&P \u2014 Consumer", "symbols": [{"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}]}, "sector_energy": {"label": "S&P \u2014 Energy", "symbols": [{"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "KRAKEN:USDTUSD", "d": "USDTUSD \u2014 Tether (USD)"}]}}}, "etf": {"label": "ETFs", "groups": {"majors": {"label": "Major ETFs", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "AMEX:IWM", "d": "IWM \u2014 iShares Russell 2000"}]}}}, "indices": {"label": "Indices", "groups": {"majors": {"label": "Major Indices", "symbols": [{"s": "TVC:SPX", "d": "SPX \u2014 S&P 500 Index"}, {"s": "TVC:NDX", "d": "NDX \u2014 NASDAQ 100"}, {"s": "TVC:DJI", "d": "DJI \u2014 Dow Jones"}]}}}, "fx": {"label": "FX", "groups": {"majors": {"label": "Major FX", "symbols": [{"s": "FX:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "FX:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "FX:GBPUSD", "d": "GBPUSD \u2014 British Pound / US Dollar"}, {"s": "FX:USDJPY", "d": "USDJPY \u2014 US Dollar / Japanese Yen"}]}}}, "commodities": {"label": "Commodities", "groups": {"benchmarks": {"label": "Benchmarks", "symbols": [{"s": "TVC:GOLD", "d": "GOLD \u2014 Gold Spot"}, {"s": "TVC:USOIL", "d": "USOIL \u2014 WTI Crude Oil"}]}}}};
+    const CATALOG = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "equities": {"label": "Stocks", "groups": {"sp_top20": {"label": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}, {"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "mega_caps": {"label": "US Mega Caps", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "KRAKEN:USDTUSD", "d": "USDTUSD \u2014 Tether (USD)"}]}}}};
 
-    // Flatten catalog for global search
-    function flattenCatalog(cat) {
-      const out = [];
-      Object.values(cat).forEach(asset => {
-        Object.values(asset.groups).forEach(group => {
-          group.symbols.forEach(s => out.push({...s}));
+    // Flatten all symbols for GLOBAL SEARCH
+    function flattenAllSymbols() {
+      const arr = [];
+      Object.values(CATALOG).forEach(asset => {
+        Object.values(asset.groups).forEach(g => {
+          g.symbols.forEach(x => arr.push({ s: x.s, d: x.d }));
         });
       });
-      return out;
+      // Remove duplicates by symbol
+      const seen = new Set();
+      return arr.filter(x => (seen.has(x.s) ? false : (seen.add(x.s), true)));
     }
-    const ALL_SYMBOLS = flattenCatalog({ ...CATALOG, favorites: undefined });
+    const ALL_SYMBOLS = flattenAllSymbols();
 
     // ====== Theme ======
     const themeBtn = document.getElementById('themeToggle');
@@ -366,56 +335,37 @@
     renderTicker();
 
     // ====== Favorites store ======
-    const FAV_KEY = 'favorites';
     function loadFavs() {
-      try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); } catch { return new Set(); }
+      try { return JSON.parse(localStorage.getItem('favorites') || '[]'); } catch (e) { return []; }
     }
-    function saveFavs(set) {
-      localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(set)));
+    function saveFavs(list) {
+      localStorage.setItem('favorites', JSON.stringify(list));
     }
-    let favorites = loadFavs();
+    function isFav(symbol) {
+      return loadFavs().some(x => x.s === symbol);
+    }
+    function toggleFav(item) {
+      let favs = loadFavs();
+      if (isFav(item.s)) {
+        favs = favs.filter(x => x.s !== item.s);
+      } else {
+        favs.push({ s: item.s, d: item.d || '' });
+      }
+      saveFavs(favs);
+    }
 
     // ====== Sidebar ======
     const sidebar = document.getElementById('sidebar');
     let currentAsset = localStorage.getItem('asset') || 'equities';
     let currentGroup = localStorage.getItem('group') || 'sp_top20';
 
-    function getFavoritesGroup() {
-      const syms = Array.from(favorites).map(s => (ALL_SYMBOLS.find(x => x.s === s) || {s, d: s}));
-      return { label: 'Saved', symbols: syms };
-    }
-
     function renderSidebar() {
       sidebar.innerHTML = '';
-
-      // Favorites (dynamic)
-      const favWrap = document.createElement('div');
-      favWrap.className = 'nav-group';
-      const favTitle = document.createElement('div');
-      favTitle.className = 'nav-title';
-      favTitle.textContent = '★ Favorites';
-      favWrap.appendChild(favTitle);
-      const favBtn = document.createElement('button');
-      favBtn.className = 'nav-item' + ((currentAsset==='favorites') ? ' active' : '');
-      favBtn.textContent = 'Saved';
-      favBtn.addEventListener('click', () => {
-        currentAsset = 'favorites';
-        currentGroup = 'saved';
-        localStorage.setItem('asset', currentAsset);
-        localStorage.setItem('group', currentGroup);
-        renderSidebar();
-        renderList();
-      });
-      favWrap.appendChild(favBtn);
-      sidebar.appendChild(favWrap);
-
-      // Other asset classes
       Object.entries(CATALOG).forEach(([assetId, asset]) => {
-        if (assetId === 'favorites') return;
         const group = document.createElement('div');
         group.className = 'nav-group';
         const title = document.createElement('div');
-        title.className = 'nav-title';
+        title.style.cssText = 'font-weight:800; margin:8px 0 6px; font-size:13px; text-transform:uppercase; opacity:.8;';
         title.textContent = asset.label;
         group.appendChild(title);
         Object.entries(asset.groups).forEach(([groupId, g]) => {
@@ -437,111 +387,102 @@
     }
     renderSidebar();
 
-    // ====== Symbol list ======
+    // ====== Symbol list + GLOBAL SEARCH ======
     const listTitle = document.getElementById('listTitle');
     const countPill = document.getElementById('countPill');
     const listHost = document.getElementById('symbolList');
     const searchInput = document.getElementById('search');
 
-    function getCurrentListMeta() {
-      if (currentAsset==='favorites') return getFavoritesGroup();
-      return CATALOG[currentAsset].groups[currentGroup];
+    function getGroupSymbols() {
+      if (currentAsset === 'favorites') {
+        return loadFavs();
+      }
+      return CATALOG[currentAsset].groups[currentGroup].symbols;
     }
-
-    function filteredSymbols(symbols, q) {
-      if (!q) return symbols;
-      q = q.toLowerCase().trim();
-      return symbols.filter(x => (x.s||'').toLowerCase().includes(q) || (x.d||'').toLowerCase().includes(q));
+    function getGlobalResults(q) {
+      const qq = q.toLowerCase();
+      return ALL_SYMBOLS.filter(x => x.s.toLowerCase().includes(qq) || (x.d||'').toLowerCase().includes(qq));
     }
 
     function renderList() {
-      const meta = getCurrentListMeta();
-      listTitle.textContent = meta.label;
-      const q = (searchInput.value || '');
-      const symbols = filteredSymbols(meta.symbols, q);
+      const q = (searchInput.value || '').trim();
+      let symbols, title;
+      if (q.length > 0) {
+        symbols = getGlobalResults(q);
+        title = 'Search results';
+      } else if (currentAsset === 'favorites') {
+        symbols = getGroupSymbols();
+        title = 'My Favorites';
+      } else {
+        const meta = CATALOG[currentAsset].groups[currentGroup];
+        symbols = meta.symbols;
+        title = meta.label;
+      }
+      listTitle.textContent = title;
       countPill.textContent = symbols.length + ' items';
       listHost.innerHTML = '';
 
       symbols.forEach(obj => {
         const row = document.createElement('div');
         row.className = 'row';
-
+        // Left block with symbol + desc
         const left = document.createElement('div');
         left.className = 'left';
-        const s1 = document.createElement('div');
-        s1.className = 'symbol';
-        s1.textContent = obj.s;
-        const s2 = document.createElement('div');
-        s2.className = 'muted';
-        s2.textContent = obj.d || '';
-        left.appendChild(s1); left.appendChild(s2);
+        const sym = document.createElement('div');
+        sym.className = 'symbol';
+        sym.textContent = obj.s;
+        const desc = document.createElement('div');
+        desc.className = 'muted';
+        desc.textContent = obj.d || '';
+        left.appendChild(sym); left.appendChild(desc);
 
+        // Right block with star + arrow
         const right = document.createElement('div');
         right.style.display = 'flex';
         right.style.alignItems = 'center';
 
-        const star = document.createElement('button');
-        star.className = 'star' + (favorites.has(obj.s) ? ' active' : '');
-        star.title = favorites.has(obj.s) ? 'Remove from favorites' : 'Add to favorites';
-        star.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/></svg>';
-        star.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          if (favorites.has(obj.s)) favorites.delete(obj.s); else favorites.add(obj.s);
-          saveFavs(favorites);
-          renderSidebar();
-          renderList();
+        const star = document.createElement('span');
+        star.className = 'star' + (isFav(obj.s) ? ' fav' : '');
+        star.textContent = isFav(obj.s) ? '★' : '☆';
+        star.title = isFav(obj.s) ? 'Remove from favorites' : 'Add to favorites';
+        star.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleFav(obj);
+          // Update star state
+          star.classList.toggle('fav');
+          star.textContent = star.classList.contains('fav') ? '★' : '☆';
+          star.title = star.classList.contains('fav') ? 'Remove from favorites' : 'Add to favorites';
+          // If on favorites view and removed, refresh list
+          if (currentAsset === 'favorites' && !star.classList.contains('fav')) {
+            renderList();
+          }
         });
 
-        right.appendChild(star);
         const arrow = document.createElement('div');
         arrow.className = 'muted';
+        arrow.style.marginLeft = '8px';
         arrow.textContent = '➜';
-        right.appendChild(arrow);
 
-        row.appendChild(left);
-        row.appendChild(right);
+        right.appendChild(star); right.appendChild(arrow);
+
+        row.appendChild(left); row.appendChild(right);
 
         row.addEventListener('click', () => {
           advSymbol = obj.s;
           localStorage.setItem('lastSymbol', advSymbol);
           renderAdvanced();
         });
-
         listHost.appendChild(row);
       });
     }
     searchInput.addEventListener('input', () => renderList());
     renderList();
 
-    // ====== Global search ======
-    const globalSearch = document.getElementById('globalSearch');
-    const globalCount = document.getElementById('globalCount');
-    let globalTimer = null;
-    function doGlobalSearch() {
-      const q = globalSearch.value.toLowerCase().trim();
-      if (!q) {
-        globalCount.textContent = '';
-        return;
-      }
-      const results = filteredSymbols(ALL_SYMBOLS, q).slice(0, 50);
-      globalCount.textContent = results.length + ' results';
-      if (results.length > 0) {
-        const top = results[0];
-        advSymbol = top.s;
-        localStorage.setItem('lastSymbol', advSymbol);
-        renderAdvanced();
-      }
-    }
-    globalSearch.addEventListener('input', () => {
-      clearTimeout(globalTimer);
-      globalTimer = setTimeout(doGlobalSearch, 200);
-    });
-
     // ====== Advanced chart ======
     const advHost = document.getElementById('adv-host');
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
     const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
-    let advSymbol = localStorage.getItem('lastSymbol') || (CATALOG.equities.groups.sp_top20.symbols[0] || {s:'NASDAQ:AAPL'}).s;
+    let advSymbol = localStorage.getItem('lastSymbol') || getGroupSymbols()[0]?.s || 'NASDAQ:NVDA';
     let advInterval = localStorage.getItem('interval') || 'D';
     let advRange = localStorage.getItem('range') || '12M';
 
