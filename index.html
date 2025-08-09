@@ -3,26 +3,31 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>My Simple Market Monitor — 10Y</title>
+  <title>Markets — S&P 500 & Crypto (Range Controls)</title>
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
-    header { padding: 8px 12px; background: #0f62fe; color: white; }
+    :root { --brand:#0f62fe; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:#fafafa; }
+    header { padding: 10px 14px; background: var(--brand); color: white; }
     main { padding: 16px; max-width: 1200px; margin: 0 auto; }
     h1 { font-size: 20px; margin: 0 0 8px; }
     .section { margin-top: 16px; }
-    footer { text-align:center; color:#888; padding: 16px; border-top:1px solid #eee; }
+    .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
+    .btn { appearance:none; border:1px solid #d0d7de; background:white; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
+    .card { background:white; border:1px solid #eee; border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+    footer { text-align:center; color:#888; padding: 16px; border-top:1px solid #eee; margin-top:24px; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Markets — S&P 500 & Crypto (10-year view)</h1>
+    <h1>Markets — S&P 500 & Crypto</h1>
   </header>
   <main>
-    <div class="section">
-      
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    <div class="section card">
+      <!-- Ticker Tape -->
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
 {
   "symbols": [
     {
@@ -92,147 +97,61 @@
   "colorTheme": "light",
   "locale": "en"
 }
-  </script>
-</div>
-
+        </script>
+      </div>
     </div>
-    <div class="section">
-      
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-{
-  "colorTheme": "light",
-  "dateRange": "120M",
-  "showChart": true,
-  "locale": "en",
-  "largeChartUrl": "",
-  "isTransparent": false,
-  "showSymbolLogo": true,
-  "showFloatingTooltip": true,
-  "width": "100%",
-  "height": "660",
-  "tabs": [
-    {
-      "title": "S&P Top 20",
-      "symbols": [
-        {
-          "s": "NASDAQ:NVDA",
-          "d": "NVIDIA"
-        },
-        {
-          "s": "NASDAQ:MSFT",
-          "d": "Microsoft"
-        },
-        {
-          "s": "NASDAQ:AAPL",
-          "d": "Apple"
-        },
-        {
-          "s": "NASDAQ:AMZN",
-          "d": "Amazon"
-        },
-        {
-          "s": "NASDAQ:META",
-          "d": "Meta"
-        },
-        {
-          "s": "NASDAQ:AVGO",
-          "d": "Broadcom"
-        },
-        {
-          "s": "NASDAQ:GOOGL",
-          "d": "Alphabet A"
-        },
-        {
-          "s": "NASDAQ:GOOG",
-          "d": "Alphabet C"
-        },
-        {
-          "s": "NYSE:BRK.B",
-          "d": "Berkshire B"
-        },
-        {
-          "s": "NASDAQ:TSLA",
-          "d": "Tesla"
-        },
-        {
-          "s": "NYSE:JPM",
-          "d": "JPMorgan"
-        },
-        {
-          "s": "NYSE:WMT",
-          "d": "Walmart"
-        },
-        {
-          "s": "NYSE:LLY",
-          "d": "Eli Lilly"
-        },
-        {
-          "s": "NYSE:V",
-          "d": "Visa"
-        },
-        {
-          "s": "NYSE:ORCL",
-          "d": "Oracle"
-        },
-        {
-          "s": "NYSE:MA",
-          "d": "Mastercard"
-        },
-        {
-          "s": "NASDAQ:NFLX",
-          "d": "Netflix"
-        },
-        {
-          "s": "NYSE:XOM",
-          "d": "ExxonMobil"
-        },
-        {
-          "s": "NASDAQ:COST",
-          "d": "Costco"
-        },
-        {
-          "s": "NYSE:JNJ",
-          "d": "Johnson & Johnson"
-        }
-      ]
-    },
-    {
-      "title": "Crypto Top Vol",
-      "symbols": [
-        {
-          "s": "BINANCE:BTCUSDT",
-          "d": "Bitcoin"
-        },
-        {
-          "s": "BINANCE:ETHUSDT",
-          "d": "Ethereum"
-        },
-        {
-          "s": "BINANCE:BNBUSDT",
-          "d": "BNB"
-        },
-        {
-          "s": "BINANCE:SOLUSDT",
-          "d": "Solana"
-        },
-        {
-          "s": "KRAKEN:USDTUSD",
-          "d": "Tether (USD)"
-        }
-      ]
-    }
-  ]
-}
-  </script>
-</div>
 
-    </div>
-    <div class="section">
-      <p>Tip: Click any symbol to open an interactive chart on TradingView. Charts default to ~10 years (120 months). If a symbol has less history, the maximum available will be shown.</p>
+    <div class="section card">
+      <div class="controls">
+        <span style="font-weight:700;">History:</span>
+        <button class="btn" data-range="60M">5Y</button>
+        <button class="btn active" data-range="120M">10Y</button>
+        <button class="btn" data-range="all">ALL</button>
+      </div>
+      <div id="overview-host"></div>
+      <p style="margin-top:8px;color:#666">Tip: Click any symbol to open an interactive chart on TradingView. If a symbol has less history than selected, the maximum available is shown.</p>
     </div>
   </main>
-  <footer>Built for you — 10Y view by default.</footer>
+  <footer>Built for you — range controls included.</footer>
+
+  <script>
+    // Data for tabs
+    const TABS = [{"title": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "Microsoft"}, {"s": "NASDAQ:AAPL", "d": "Apple"}, {"s": "NASDAQ:AMZN", "d": "Amazon"}, {"s": "NASDAQ:META", "d": "Meta"}, {"s": "NASDAQ:AVGO", "d": "Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "Alphabet C"}, {"s": "NYSE:BRK.B", "d": "Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "Tesla"}, {"s": "NYSE:JPM", "d": "JPMorgan"}, {"s": "NYSE:WMT", "d": "Walmart"}, {"s": "NYSE:LLY", "d": "Eli Lilly"}, {"s": "NYSE:V", "d": "Visa"}, {"s": "NYSE:ORCL", "d": "Oracle"}, {"s": "NYSE:MA", "d": "Mastercard"}, {"s": "NASDAQ:NFLX", "d": "Netflix"}, {"s": "NYSE:XOM", "d": "ExxonMobil"}, {"s": "NASDAQ:COST", "d": "Costco"}, {"s": "NYSE:JNJ", "d": "Johnson & Johnson"}]}, {"title": "Crypto Top Vol", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNB"}, {"s": "BINANCE:SOLUSDT", "d": "Solana"}, {"s": "KRAKEN:USDTUSD", "d": "Tether (USD)"}]}];
+
+    const host = document.getElementById('overview-host');
+    const buttons = Array.from(document.querySelectorAll('.btn[data-range]'));
+
+    function loadOverview(range) {
+      host.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+      script.async = true;
+      const cfg = {
+        colorTheme: 'light',
+        dateRange: range,
+        showChart: true,
+        locale: 'en',
+        largeChartUrl: '',
+        isTransparent: false,
+        showSymbolLogo: true,
+        showFloatingTooltip: true,
+        width: '100%',
+        height: '660',
+        tabs: TABS
+      };
+      script.innerHTML = JSON.stringify(cfg, null, 2);
+      host.querySelector('.tradingview-widget-container').appendChild(script);
+    }
+
+    buttons.forEach(btn => btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadOverview(btn.dataset.range);
+    }));
+
+    // Initial load
+    loadOverview('120M');
+  </script>
 </body>
 </html>
