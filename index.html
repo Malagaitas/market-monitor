@@ -3,56 +3,26 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Markets — S&P 500 & Crypto (Range Control)</title>
+  <title>My Simple Market Monitor</title>
   <style>
-    :root {
-      --brand:#0f62fe;
-      --bg:#fafafa;
-      --card:#ffffff;
-      --text:#111;
-      --muted:#666;
-      --border:#e5e5e5;
-    }
-    [data-theme="dark"] {
-      --bg:#0b0f17;
-      --card:#111827;
-      --text:#f5f7fb;
-      --muted:#b6c0d1;
-      --border:#24324a;
-    }
-    html, body { height:100%; }
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
-    header { padding: 10px 14px; background: var(--brand); color: white; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; }
+    header { padding: 8px 12px; background: #0f62fe; color: white; }
     main { padding: 16px; max-width: 1200px; margin: 0 auto; }
     h1 { font-size: 20px; margin: 0 0 8px; }
     .section { margin-top: 16px; }
-    .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
-    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
-    .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
-    .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-    footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
-    .right { display:flex; align-items:center; gap:8px; }
-    .toggle { display:inline-flex; align-items:center; gap:6px; }
+    footer { text-align:center; color:#888; padding: 16px; border-top:1px solid #eee; }
   </style>
 </head>
 <body>
   <header>
-    <div class="row">
-      <h1>Markets — S&P 500 & Crypto</h1>
-      <div class="right">
-        <span class="pill" id="count-pill">25 symbols</span>
-        <label class="toggle">
-          <input id="themeToggle" type="checkbox" /> Dark
-        </label>
-      </div>
-    </div>
+    <h1>Markets — S&P 500 & Crypto</h1>
   </header>
   <main>
-    <div class="section card">
-      <!-- Ticker Tape -->
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    <div class="section">
+      
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
 {
   "symbols": [
     {
@@ -122,68 +92,147 @@
   "colorTheme": "light",
   "locale": "en"
 }
-        </script>
-      </div>
-    </div>
+  </script>
+</div>
 
-    <div class="section card">
-      <div class="controls">
-        <span style="font-weight:700;">History:</span>
-        <button class="btn active" data-range="60M">5Y</button>
-        <button class="btn" data-range="120M">10Y</button>
-        <button class="btn" data-range="all">ALL</button>
-      </div>
-      <div id="overview-host"></div>
-      <p style="margin-top:8px;color:var(--muted)">Tip: Click any symbol to open an interactive chart on TradingView. If a symbol has less history than selected, the maximum available is shown.</p>
+    </div>
+    <div class="section">
+      
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+{
+  "colorTheme": "light",
+  "dateRange": "1D",
+  "showChart": true,
+  "locale": "en",
+  "largeChartUrl": "",
+  "isTransparent": false,
+  "showSymbolLogo": true,
+  "showFloatingTooltip": true,
+  "width": "100%",
+  "height": "660",
+  "tabs": [
+    {
+      "title": "S&P Top 20",
+      "symbols": [
+        {
+          "s": "NASDAQ:NVDA",
+          "d": "NVIDIA"
+        },
+        {
+          "s": "NASDAQ:MSFT",
+          "d": "Microsoft"
+        },
+        {
+          "s": "NASDAQ:AAPL",
+          "d": "Apple"
+        },
+        {
+          "s": "NASDAQ:AMZN",
+          "d": "Amazon"
+        },
+        {
+          "s": "NASDAQ:META",
+          "d": "Meta"
+        },
+        {
+          "s": "NASDAQ:AVGO",
+          "d": "Broadcom"
+        },
+        {
+          "s": "NASDAQ:GOOGL",
+          "d": "Alphabet A"
+        },
+        {
+          "s": "NASDAQ:GOOG",
+          "d": "Alphabet C"
+        },
+        {
+          "s": "NYSE:BRK.B",
+          "d": "Berkshire B"
+        },
+        {
+          "s": "NASDAQ:TSLA",
+          "d": "Tesla"
+        },
+        {
+          "s": "NYSE:JPM",
+          "d": "JPMorgan"
+        },
+        {
+          "s": "NYSE:WMT",
+          "d": "Walmart"
+        },
+        {
+          "s": "NYSE:LLY",
+          "d": "Eli Lilly"
+        },
+        {
+          "s": "NYSE:V",
+          "d": "Visa"
+        },
+        {
+          "s": "NYSE:ORCL",
+          "d": "Oracle"
+        },
+        {
+          "s": "NYSE:MA",
+          "d": "Mastercard"
+        },
+        {
+          "s": "NASDAQ:NFLX",
+          "d": "Netflix"
+        },
+        {
+          "s": "NYSE:XOM",
+          "d": "ExxonMobil"
+        },
+        {
+          "s": "NASDAQ:COST",
+          "d": "Costco"
+        },
+        {
+          "s": "NYSE:JNJ",
+          "d": "Johnson & Johnson"
+        }
+      ]
+    },
+    {
+      "title": "Crypto Top Vol",
+      "symbols": [
+        {
+          "s": "BINANCE:BTCUSDT",
+          "d": "Bitcoin"
+        },
+        {
+          "s": "BINANCE:ETHUSDT",
+          "d": "Ethereum"
+        },
+        {
+          "s": "BINANCE:BNBUSDT",
+          "d": "BNB"
+        },
+        {
+          "s": "BINANCE:SOLUSDT",
+          "d": "Solana"
+        },
+        {
+          "s": "KRAKEN:USDTUSD",
+          "d": "Tether (USD)"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</div>
+
+    </div>
+    <div class="section">
+      <p>Tip: Click any symbol to open an interactive chart on TradingView. This page is read-only and requires no login.</p>
     </div>
   </main>
-  <footer>Built for you — range controls included.</footer>
-
-  <script>
-    // Data for tabs
-    const TABS_DEFAULT = [{"title": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "Microsoft"}, {"s": "NASDAQ:AAPL", "d": "Apple"}, {"s": "NASDAQ:AMZN", "d": "Amazon"}, {"s": "NASDAQ:META", "d": "Meta"}, {"s": "NASDAQ:AVGO", "d": "Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "Alphabet C"}, {"s": "NYSE:BRK.B", "d": "Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "Tesla"}, {"s": "NYSE:JPM", "d": "JPMorgan"}, {"s": "NYSE:WMT", "d": "Walmart"}, {"s": "NYSE:LLY", "d": "Eli Lilly"}, {"s": "NYSE:V", "d": "Visa"}, {"s": "NYSE:ORCL", "d": "Oracle"}, {"s": "NYSE:MA", "d": "Mastercard"}, {"s": "NASDAQ:NFLX", "d": "Netflix"}, {"s": "NYSE:XOM", "d": "ExxonMobil"}, {"s": "NASDAQ:COST", "d": "Costco"}, {"s": "NYSE:JNJ", "d": "Johnson & Johnson"}]}, {"title": "Crypto Top Vol", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNB"}, {"s": "BINANCE:SOLUSDT", "d": "Solana"}, {"s": "KRAKEN:USDTUSD", "d": "Tether (USD)"}]}];
-
-    const host = document.getElementById('overview-host');
-    const buttons = Array.from(document.querySelectorAll('.btn[data-range]'));
-
-    function loadOverview(range) {
-      host.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-      script.async = true;
-      const cfg = {
-        colorTheme: 'light',
-        dateRange: range,
-        showChart: true,
-        locale: 'en',
-        largeChartUrl: '',
-        isTransparent: false,
-        showSymbolLogo: true,
-        showFloatingTooltip: true,
-        width: '100%',
-        height: '660',
-        tabs: TABS_DEFAULT
-      };
-      script.innerHTML = JSON.stringify(cfg, null, 2);
-      host.querySelector('.tradingview-widget-container').appendChild(script);
-    }
-
-    // Range
-    buttons.forEach(btn => btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      loadOverview(btn.dataset.range);
-    }));
-
-    // Theme
-    document.getElementById('themeToggle').addEventListener('change', (e) => {
-      document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
-      loadOverview('120M');
-    });
-
-    // Initial load
-    loadOverview('60M');
-  </script>
+  <footer>Built for you — simple, fast, no login required.</footer>
 </body>
 </html>
