@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — sidebar with categories, global search, favorites, and an advanced chart."/>
+  <meta name="description" content="Great Portfolio Tracer — sidebar with categories (Stocks, Crypto, ETFs, Indices, FX), global search, favorites, and an advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
@@ -37,10 +37,10 @@
     .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
                    padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
     .toggle-btn svg { width:18px; height:18px; }
-    main { max-width: 1400px; margin: 0 auto; padding: 16px; }
+    main { max-width: 1500px; margin: 0 auto; padding: 16px; }
     .section { margin-top: 16px; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-    .layout { display:grid; grid-template-columns: 260px 340px 1fr; gap:16px; align-items:start; }
+    .layout { display:grid; grid-template-columns: 260px 360px 1fr; gap:16px; align-items:start; }
     .sidebar { background:var(--sidebar); border:1px solid var(--border); border-radius:12px; padding:12px; }
     .sidebar h3 { margin:4px 0 8px; font-size:14px; opacity:.9; }
     .nav-group { margin-bottom:10px; }
@@ -104,7 +104,7 @@
             <strong id="listTitle">Symbols</strong>
             <span class="pill" id="countPill">0</span>
           </div>
-          <div class="search"><input id="search" type="text" placeholder="Global search (e.g., NVDA, Bitcoin)"/></div>
+          <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SPY, EURUSD)"/></div>
         </div>
         <div id="symbolList"></div>
       </section>
@@ -131,7 +131,7 @@
           </div>
         </div>
         <div id="adv-host" style="height:620px;"></div>
-        <p class="muted">Click a symbol in the middle list to load it on the chart. Click ★ to add/remove favorites.</p>
+        <p class="muted">Click a symbol to load the chart. Use ★ to add/remove favorites.</p>
       </section>
     </div>
   </main>
@@ -196,12 +196,20 @@
       "title": "BNBUSDT"
     },
     {
-      "proName": "BINANCE:SOLUSDT",
-      "title": "SOLUSDT"
+      "proName": "AMEX:SPY",
+      "title": "SPY"
     },
     {
-      "proName": "KRAKEN:USDTUSD",
-      "title": "USDTUSD"
+      "proName": "AMEX:VOO",
+      "title": "VOO"
+    },
+    {
+      "proName": "OANDA:EURUSD",
+      "title": "EURUSD"
+    },
+    {
+      "proName": "OANDA:GBPUSD",
+      "title": "GBPUSD"
     }
   ],
   "showSymbolLogo": true,
@@ -265,12 +273,20 @@
       "title": "BNBUSDT"
     },
     {
-      "proName": "BINANCE:SOLUSDT",
-      "title": "SOLUSDT"
+      "proName": "AMEX:SPY",
+      "title": "SPY"
     },
     {
-      "proName": "KRAKEN:USDTUSD",
-      "title": "USDTUSD"
+      "proName": "AMEX:VOO",
+      "title": "VOO"
+    },
+    {
+      "proName": "OANDA:EURUSD",
+      "title": "EURUSD"
+    },
+    {
+      "proName": "OANDA:GBPUSD",
+      "title": "GBPUSD"
     }
   ],
   "showSymbolLogo": true,
@@ -280,7 +296,7 @@
   "locale": "en"
 }
     };
-    const CATALOG = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "equities": {"label": "Stocks", "groups": {"sp_top20": {"label": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}, {"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "mega_caps": {"label": "US Mega Caps", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "KRAKEN:USDTUSD", "d": "USDTUSD \u2014 Tether (USD)"}]}}}};
+    const CATALOG = {"favorites": {"label": "\u2605 Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "equities": {"label": "Stocks", "groups": {"sp_top20": {"label": "S&P Top 20", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:JPM", "d": "JPM \u2014 JPMorgan"}, {"s": "NYSE:WMT", "d": "WMT \u2014 Walmart"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}, {"s": "NYSE:V", "d": "V \u2014 Visa"}, {"s": "NYSE:ORCL", "d": "ORCL \u2014 Oracle"}, {"s": "NYSE:MA", "d": "MA \u2014 Mastercard"}, {"s": "NASDAQ:NFLX", "d": "NFLX \u2014 Netflix"}, {"s": "NYSE:XOM", "d": "XOM \u2014 ExxonMobil"}, {"s": "NASDAQ:COST", "d": "COST \u2014 Costco"}, {"s": "NYSE:JNJ", "d": "JNJ \u2014 Johnson & Johnson"}]}, "mega_caps": {"label": "US Mega Caps", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NASDAQ:GOOG", "d": "GOOG \u2014 Alphabet C"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "KRAKEN:USDTUSD", "d": "USDTUSD \u2014 Tether (USD)"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US ETFs", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "AMEX:IVV", "d": "IVV \u2014 iShares Core S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ (Nasdaq-100)"}, {"s": "AMEX:IWM", "d": "IWM \u2014 iShares Russell 2000"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}]}, "sectors_us": {"label": "US Sector ETFs", "symbols": [{"s": "AMEX:XLK", "d": "XLK \u2014 Tech"}, {"s": "AMEX:XLF", "d": "XLF \u2014 Financials"}, {"s": "AMEX:XLE", "d": "XLE \u2014 Energy"}, {"s": "AMEX:XLV", "d": "XLV \u2014 Health Care"}]}}}, "indices": {"label": "Indices", "groups": {"us_via_etf": {"label": "US Indices (via ETFs)", "symbols": [{"s": "AMEX:SPY", "d": "S&P 500 (via SPY)"}, {"s": "NASDAQ:QQQ", "d": "Nasdaq-100 (via QQQ)"}, {"s": "AMEX:DIA", "d": "Dow Jones (via DIA)"}, {"s": "AMEX:IWM", "d": "Russell 2000 (via IWM)"}, {"s": "TVC:VIX", "d": "VIX \u2014 Volatility Index"}]}}}, "fx": {"label": "FX", "groups": {"majors": {"label": "Majors", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:GBPUSD", "d": "GBPUSD \u2014 British Pound / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:USDJPY", "d": "USDJPY \u2014 US Dollar / Japanese Yen"}, {"s": "OANDA:AUDUSD", "d": "AUDUSD \u2014 Australian Dollar / US Dollar"}, {"s": "OANDA:USDCAD", "d": "USDCAD \u2014 US Dollar / Canadian Dollar"}]}}}};
 
     // Flatten all symbols for GLOBAL SEARCH
     function flattenAllSymbols() {
@@ -290,7 +306,6 @@
           g.symbols.forEach(x => arr.push({ s: x.s, d: x.d }));
         });
       });
-      // Remove duplicates by symbol
       const seen = new Set();
       return arr.filter(x => (seen.has(x.s) ? false : (seen.add(x.s), true)));
     }
@@ -425,7 +440,6 @@
       symbols.forEach(obj => {
         const row = document.createElement('div');
         row.className = 'row';
-        // Left block with symbol + desc
         const left = document.createElement('div');
         left.className = 'left';
         const sym = document.createElement('div');
@@ -436,7 +450,6 @@
         desc.textContent = obj.d || '';
         left.appendChild(sym); left.appendChild(desc);
 
-        // Right block with star + arrow
         const right = document.createElement('div');
         right.style.display = 'flex';
         right.style.alignItems = 'center';
@@ -448,11 +461,9 @@
         star.addEventListener('click', (e) => {
           e.stopPropagation();
           toggleFav(obj);
-          // Update star state
           star.classList.toggle('fav');
           star.textContent = star.classList.contains('fav') ? '★' : '☆';
           star.title = star.classList.contains('fav') ? 'Remove from favorites' : 'Add to favorites';
-          // If on favorites view and removed, refresh list
           if (currentAsset === 'favorites' && !star.classList.contains('fav')) {
             renderList();
           }
@@ -482,7 +493,7 @@
     const advHost = document.getElementById('adv-host');
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
     const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
-    let advSymbol = localStorage.getItem('lastSymbol') || getGroupSymbols()[0]?.s || 'NASDAQ:NVDA';
+    let advSymbol = localStorage.getItem('lastSymbol') || getGroupSymbols()[0]?.s || 'AMEX:SPY';
     let advInterval = localStorage.getItem('interval') || 'D';
     let advRange = localStorage.getItem('range') || '12M';
 
