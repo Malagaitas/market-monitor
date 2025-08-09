@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
-  <meta name="description" content="Great Portfolio Tracer — collapsible sidebar, collapsible list, global search, favorites, and an advanced chart."/>
+  <meta name="description" content="Great Portfolio Tracer — collapsible sidebar & list with icon-only toggles, global search, favorites, advanced chart."/>
   <meta name="theme-color" content="#0f62fe"/>
   <link rel="icon" type="image/svg+xml" href="logo.svg"/>
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
@@ -48,7 +48,8 @@
     .layout.sidebar-collapsed .sidebar { display:none; }
     .sidebar h3 { margin:4px 0 8px; font-size:14px; opacity:.9; }
     .sidebar .controls-inline { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
-    .small-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
+    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
+    .icon-btn:active { transform: translateY(1px); }
     .nav-group { margin-bottom:10px; }
     .nav-item { display:block; width:100%; text-align:left; border:1px solid var(--border); background:var(--card); color:var(--text);
                  padding:8px 10px; border-radius:8px; cursor:pointer; margin-bottom:6px; font-weight:600; }
@@ -68,7 +69,7 @@
     .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
     .star { font-size:18px; margin-left:8px; user-select:none; }
     .star.fav { color: var(--star); }
-    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; padding: 8px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
     #assetsShowFloating { left: 8px; display:none; }
     #listShowFloating { right: 8px; display:none; }
     footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
@@ -107,7 +108,7 @@
       <!-- Sidebar -->
       <aside class="sidebar">
         <div class="controls-inline">
-          <button id="assetsToggleInside" class="small-btn" title="Show/Hide Asset classes">☰ Assets</button>
+          <button id="assetsToggleInside" class="icon-btn" title="Hide assets">☰</button>
         </div>
         <h3>Asset classes</h3>
         <div id="sidebar"></div>
@@ -122,7 +123,7 @@
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
             <div class="search"><input id="search" type="text" placeholder="Global search (e.g., SPY, EURUSD)"/></div>
-            <button id="listToggle" class="small-btn" title="Show/Hide list">Toggle list</button>
+            <button id="listToggle" class="icon-btn" title="Hide list">☰</button>
           </div>
         </div>
         <div id="symbolList"></div>
@@ -154,9 +155,9 @@
       </section>
     </div>
 
-    <!-- Floating show buttons (only visible when columns are hidden) -->
-    <button id="assetsShowFloating" class="floating-btn">☰ Assets</button>
-    <button id="listShowFloating" class="floating-btn">Show list</button>
+    <!-- Floating show buttons -->
+    <button id="assetsShowFloating" class="floating-btn" title="Show assets">☰</button>
+    <button id="listShowFloating" class="floating-btn" title="Show list">☰</button>
   </main>
 
   <footer>GPT - Great Portfolio Tracer</footer>
@@ -374,6 +375,9 @@
       gridLayout.classList.toggle('list-collapsed', listCollapsed);
       assetsShowFloating.style.display = sidebarCollapsed ? 'block' : 'none';
       listShowFloating.style.display = listCollapsed ? 'block' : 'none';
+      // Update titles for tooltips
+      assetsToggleInside.title = sidebarCollapsed ? 'Show assets' : 'Hide assets';
+      listToggle.title = listCollapsed ? 'Show list' : 'Hide list';
     }
     applyLayoutState();
 
