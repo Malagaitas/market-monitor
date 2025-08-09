@@ -33,7 +33,6 @@
     .layout.list-collapsed { grid-template-columns:1fr; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
     .list-header { display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--border); justify-content:space-between; }
-    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; display:none; }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
     .row:hover { background: rgba(15, 98, 254, .08); }
     .left { display:flex; flex-direction:column; gap:3px; }
@@ -96,7 +95,7 @@
         <div class="list-header">
           <div class="controls"><strong id="listTitle">Symbols</strong><span class="muted" id="countPill" style="margin-left:8px;">0</span></div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <button id="listToggle" class="icon-btn" title="Hide list">☰</button>
+            <!-- removed list toggle button -->
           </div>
         </div>
         <div id="symbolList"></div>
@@ -128,7 +127,7 @@
       </section>
     </div>
 
-    <!-- Right-edge toggle -->
+    <!-- Right-edge toggle only -->
     <button id="listRightToggle" class="floating-btn" title="Hide list">☰</button>
   </main>
 
@@ -335,7 +334,6 @@
   // ====== Layout (list collapse) ======
   const gridLayout = document.getElementById('gridLayout');
   const listRightToggle = document.getElementById('listRightToggle');
-  const listToggle = document.getElementById('listToggle');
   function applyLayout(){
     gridLayout.classList.toggle('list-collapsed', store.listCollapsed);
     listRightToggle.title = store.listCollapsed ? 'Show list' : 'Hide list';
@@ -343,7 +341,6 @@
   applyLayout();
   function toggleList(){ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); }
   listRightToggle.addEventListener('click', toggleList);
-  listToggle.addEventListener('click', toggleList);
 
   // ====== List + search ======
   const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList');
