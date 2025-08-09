@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>GPT - Great Portfolio Tracer</title>
   <meta name="description" content="Great Portfolio Tracer — clean market monitor with stocks & crypto, ranges, intervals, and theme toggle."/>
-  <meta property="og:title" content="GPT - Great Portfolio Tracer"/>
-  <meta property="og:description" content="Clean market monitor with stocks & crypto."/>
   <meta name="theme-color" content="#0f62fe"/>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Crect%20rx%3D%2212%22%20ry%3D%2212%22%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%230f62fe%22%2F%3E%0A%20%20%3Ctext%20x%3D%2250%25%22%20y%3D%2254%25%22%20text-anchor%3D%22middle%22%20font-family%3D%22Segoe%20UI%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2228%22%20font-weight%3D%22700%22%20fill%3D%22%23ffffff%22%3EGPT%3C%2Ftext%3E%0A%3C%2Fsvg%3E"/>
+  <link rel="icon" type="image/svg+xml" href="logo.svg"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
   <style>
     :root {
       --brand:#0f62fe;
@@ -28,7 +27,8 @@
     html, body { height:100%; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
     header { padding: 10px 16px; background: var(--brand); color: white; display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    header h1 { font-size: 18px; margin:0; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand img { height:26px; width:auto; display:block; }
     .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
                    padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
     .toggle-btn svg { width:18px; height:18px; }
@@ -46,10 +46,12 @@
 </head>
 <body>
   <header>
-    <h1>GPT - Great Portfolio Tracer</h1>
+    <div class="brand">
+      <img src="logo.svg" alt="GPT logo" />
+      <strong>GPT - Great Portfolio Tracer</strong>
+    </div>
     <button id="themeToggle" class="toggle-btn" title="Toggle light/dark">
       <span id="themeIcon" aria-hidden="true">
-        <!-- Sun icon (light) -->
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
       </span>
       <span id="themeLabel">Light</span>
@@ -57,43 +59,19 @@
   </header>
 
   <main>
-    <!-- Top ticker widget -->
     <div class="section card">
       <div id="ticker-host">
         <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>
       </div>
     </div>
 
-    <!-- Advanced chart controls -->
     <div class="section card">
       <div class="row">
         <div class="controls">
           <strong>Symbol:</strong>
-          <select id="advSym"><option value="NASDAQ:NVDA">NVDA — NVIDIA</option>
-<option value="NASDAQ:MSFT">MSFT — Microsoft</option>
-<option value="NASDAQ:AAPL">AAPL — Apple</option>
-<option value="NASDAQ:AMZN">AMZN — Amazon</option>
-<option value="NASDAQ:META">META — Meta</option>
-<option value="NASDAQ:AVGO">AVGO — Broadcom</option>
-<option value="NASDAQ:GOOGL">GOOGL — Alphabet A</option>
-<option value="NASDAQ:GOOG">GOOG — Alphabet C</option>
-<option value="NYSE:BRK.B">BRK.B — Berkshire B</option>
-<option value="NASDAQ:TSLA">TSLA — Tesla</option>
-<option value="NYSE:JPM">JPM — JPMorgan</option>
-<option value="NYSE:WMT">WMT — Walmart</option>
-<option value="NYSE:LLY">LLY — Eli Lilly</option>
-<option value="NYSE:V">V — Visa</option>
-<option value="NYSE:ORCL">ORCL — Oracle</option>
-<option value="NYSE:MA">MA — Mastercard</option>
-<option value="NASDAQ:NFLX">NFLX — Netflix</option>
-<option value="NYSE:XOM">XOM — ExxonMobil</option>
-<option value="NASDAQ:COST">COST — Costco</option>
-<option value="NYSE:JNJ">JNJ — Johnson & Johnson</option>
-<option value="BINANCE:BTCUSDT">BTCUSDT — Bitcoin</option>
-<option value="BINANCE:ETHUSDT">ETHUSDT — Ethereum</option>
-<option value="BINANCE:BNBUSDT">BNBUSDT — BNB</option>
-<option value="BINANCE:SOLUSDT">SOLUSDT — Solana</option>
-<option value="KRAKEN:USDTUSD">USDTUSD — Tether (USD)</option></select>
+          <select id="advSym">
+            <option value="NASDAQ:NVDA">NVDA — NVIDIA</option><option value="NASDAQ:MSFT">MSFT — Microsoft</option><option value="NASDAQ:AAPL">AAPL — Apple</option><option value="NASDAQ:AMZN">AMZN — Amazon</option><option value="NASDAQ:META">META — Meta</option><option value="NASDAQ:AVGO">AVGO — Broadcom</option><option value="NASDAQ:GOOGL">GOOGL — Alphabet A</option><option value="NASDAQ:GOOG">GOOG — Alphabet C</option><option value="NYSE:BRK.B">BRK.B — Berkshire B</option><option value="NASDAQ:TSLA">TSLA — Tesla</option><option value="NYSE:JPM">JPM — JPMorgan</option><option value="NYSE:WMT">WMT — Walmart</option><option value="NYSE:LLY">LLY — Eli Lilly</option><option value="NYSE:V">V — Visa</option><option value="NYSE:ORCL">ORCL — Oracle</option><option value="NYSE:MA">MA — Mastercard</option><option value="NASDAQ:NFLX">NFLX — Netflix</option><option value="NYSE:XOM">XOM — ExxonMobil</option><option value="NASDAQ:COST">COST — Costco</option><option value="NYSE:JNJ">JNJ — Johnson & Johnson</option><option value="BINANCE:BTCUSDT">BTCUSDT — Bitcoin</option><option value="BINANCE:ETHUSDT">ETHUSDT — Ethereum</option><option value="BINANCE:BNBUSDT">BNBUSDT — BNB</option><option value="BINANCE:SOLUSDT">SOLUSDT — Solana</option><option value="KRAKEN:USDTUSD">USDTUSD — Tether (USD)</option>
+          </select>
         </div>
         <div class="controls" style="margin-left:auto">
           <strong>Interval:</strong>
@@ -121,7 +99,6 @@
   <footer>GPT - Great Portfolio Tracer</footer>
 
   <script>
-    // ===== Theme state =====
     const themeBtn = document.getElementById('themeToggle');
     const themeIcon = document.getElementById('themeIcon');
     const themeLabel = document.getElementById('themeLabel');
@@ -148,7 +125,6 @@
       renderAdvanced();
     });
 
-    // ===== Ticker (top widget) =====
     const tickerHost = document.getElementById('ticker-host');
     function renderTicker() {
       tickerHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
@@ -297,15 +273,14 @@
       tickerHost.querySelector('.tradingview-widget-container').appendChild(script);
     }
 
-    // ===== Advanced chart =====
     const advHost = document.getElementById('adv-host');
     const advSelect = document.getElementById('advSym');
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
     const rangeButtons = Array.from(document.querySelectorAll('.btn[data-range]'));
 
     let advSymbol = advSelect.value;
-    let advInterval = 'D';   // '60' = 1H, 'D' = 1D, 'W' = 1W
-    let advRange = '12M';    // default 1Y
+    let advInterval = 'D';
+    let advRange = '12M';
 
     function renderAdvanced() {
       advHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
@@ -335,7 +310,6 @@
       advHost.querySelector('.tradingview-widget-container').appendChild(script);
     }
 
-    // Interval buttons
     intButtons.forEach(btn => btn.addEventListener('click', () => {
       intButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -343,7 +317,6 @@
       renderAdvanced();
     }));
 
-    // Range buttons
     rangeButtons.forEach(btn => btn.addEventListener('click', () => {
       rangeButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -353,7 +326,6 @@
 
     advSelect.addEventListener('change', () => { advSymbol = advSelect.value; renderAdvanced(); });
 
-    // Initial render
     renderTicker();
     renderAdvanced();
   </script>
