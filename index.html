@@ -1,43 +1,69 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Markets — Advanced Timeframes</title>
+  <title>Markets — Top Widget + Theme Toggle</title>
   <style>
     :root {
       --brand:#0f62fe;
-      --bg:#fafafa;
+      --bg:#f5f7fb;
       --card:#ffffff;
-      --text:#111;
-      --muted:#666;
-      --border:#e5e5e5;
+      --text:#0b1221;
+      --muted:#66758f;
+      --border:#e5e8ef;
     }
+    [data-theme="dark"] {
+      --bg:#0b0f17;
+      --card:#111827;
+      --text:#f5f7fb;
+      --muted:#b6c0d1;
+      --border:#24324a;
+    }
+    html, body { height:100%; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background:var(--bg); color:var(--text);}
-    header { padding: 10px 14px; background: var(--brand); color: white; }
+    header { padding: 10px 16px; background: var(--brand); color: white; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    header h1 { font-size: 18px; margin:0; }
+    .toggle-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff;
+                   padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:600; }
+    .toggle-btn svg { width:18px; height:18px; }
     main { padding: 16px; max-width: 1200px; margin: 0 auto; }
-    h1 { font-size: 20px; margin: 0 0 8px; }
     .section { margin-top: 16px; }
-    .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
-    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; }
-    .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
     .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .controls { display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap; }
     .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    select { padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); }
+    .btn { appearance:none; border:1px solid var(--border); background:var(--card); padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:600; color:var(--text); }
+    .btn.active { background: var(--brand); border-color: var(--brand); color:white; }
+    select { padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--text); }
+    p.tip { color:var(--muted); margin-top:8px; }
     footer { text-align:center; color:var(--muted); padding: 16px; border-top:1px solid var(--border); margin-top:24px; }
-    .spacer { flex:1; }
-    .label { font-weight:700; }
   </style>
 </head>
 <body>
   <header>
     <h1>Markets — S&P 500 & Crypto</h1>
+    <button id="themeToggle" class="toggle-btn" title="Toggle light/dark">
+      <span id="themeIcon" aria-hidden="true">
+        <!-- Sun icon (light) -->
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+      </span>
+      <span id="themeLabel">Light</span>
+    </button>
   </header>
+
   <main>
+    <!-- Top ticker widget -->
+    <div class="section card">
+      <div id="ticker-host">
+        <div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>
+      </div>
+    </div>
+
+    <!-- Advanced chart controls -->
     <div class="section card">
       <div class="row">
         <div class="controls">
-          <span class="label">Symbol:</span>
+          <strong>Symbol:</strong>
           <select id="advSym"><option value="NASDAQ:NVDA">NVDA — NVIDIA</option>
 <option value="NASDAQ:MSFT">MSFT — Microsoft</option>
 <option value="NASDAQ:AAPL">AAPL — Apple</option>
@@ -64,16 +90,15 @@
 <option value="BINANCE:SOLUSDT">SOLUSDT — Solana</option>
 <option value="KRAKEN:USDTUSD">USDTUSD — Tether (USD)</option></select>
         </div>
-        <div class="spacer"></div>
-        <div class="controls">
-          <span class="label">Interval:</span>
+        <div class="controls" style="margin-left:auto">
+          <strong>Interval:</strong>
           <button class="btn active" data-int="D">1D</button>
           <button class="btn" data-int="W">1W</button>
           <button class="btn" data-int="60">1H</button>
         </div>
       </div>
       <div class="controls">
-        <span class="label">Range:</span>
+        <strong>Range:</strong>
         <button class="btn" data-range="1D">1D</button>
         <button class="btn" data-range="1M">1M</button>
         <button class="btn" data-range="3M">3M</button>
@@ -84,12 +109,190 @@
         <button class="btn" data-range="ALL">ALL</button>
       </div>
       <div id="adv-host" style="height:640px;"></div>
-      <p style="margin-top:8px;color:var(--muted)">Tip: Interval changes candle resolution; Range changes the visible window (10Y ≈ 120 months).</p>
+      <p class="tip">Interval changes candle resolution (1H/1D/1W). Range changes the visible window (10Y ≈ 120 months).</p>
     </div>
   </main>
-  <footer>Built for you — selectable intervals and ranges.</footer>
+
+  <footer>Built for you — top widget + theme toggle + full range controls.</footer>
 
   <script>
+    // ===== Theme state =====
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    let theme = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeIcon();
+
+    function updateThemeIcon() {
+      if (theme === 'dark') {
+        themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>';
+        themeLabel.textContent = 'Dark';
+      } else {
+        themeIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.76 4.84l-1.8-1.79L3.17 4.84l1.79 1.79 1.8-1.79zm10.48 14.32l1.79 1.79 1.79-1.79-1.79-1.79-1.79 1.79zM12 4V1h-0v3h0zm0 19v-3h-0v3h0zm8-11h3v0h-3v0zm-19 0v0h3v0H1zM6.76 19.16l-1.8 1.79-1.79-1.79 1.79-1.79 1.8 1.79zM17.24 4.84l1.79-1.79 1.79 1.79-1.79 1.79-1.79-1.79zM12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>';
+        themeLabel.textContent = 'Light';
+      }
+    }
+
+    themeBtn.addEventListener('click', () => {
+      theme = (theme === 'light') ? 'dark' : 'light';
+      localStorage.setItem('theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon();
+      renderTicker();
+      renderAdvanced();
+    });
+
+    // ===== Ticker (top widget) =====
+    const tickerHost = document.getElementById('ticker-host');
+    function renderTicker() {
+      tickerHost.innerHTML = '<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div>';
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js';
+      script.async = true;
+      const cfg = theme === 'dark' ? {
+  "symbols": [
+    {
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
+    },
+    {
+      "proName": "NASDAQ:MSFT",
+      "title": "MSFT"
+    },
+    {
+      "proName": "NASDAQ:AAPL",
+      "title": "AAPL"
+    },
+    {
+      "proName": "NASDAQ:AMZN",
+      "title": "AMZN"
+    },
+    {
+      "proName": "NASDAQ:META",
+      "title": "META"
+    },
+    {
+      "proName": "NASDAQ:AVGO",
+      "title": "AVGO"
+    },
+    {
+      "proName": "NASDAQ:GOOGL",
+      "title": "GOOGL"
+    },
+    {
+      "proName": "NASDAQ:GOOG",
+      "title": "GOOG"
+    },
+    {
+      "proName": "NYSE:BRK.B",
+      "title": "BRK.B"
+    },
+    {
+      "proName": "NASDAQ:TSLA",
+      "title": "TSLA"
+    },
+    {
+      "proName": "BINANCE:BTCUSDT",
+      "title": "BTCUSDT"
+    },
+    {
+      "proName": "BINANCE:ETHUSDT",
+      "title": "ETHUSDT"
+    },
+    {
+      "proName": "BINANCE:BNBUSDT",
+      "title": "BNBUSDT"
+    },
+    {
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
+    },
+    {
+      "proName": "KRAKEN:USDTUSD",
+      "title": "USDTUSD"
+    }
+  ],
+  "showSymbolLogo": true,
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "colorTheme": "dark",
+  "locale": "en"
+} : {
+  "symbols": [
+    {
+      "proName": "NASDAQ:NVDA",
+      "title": "NVDA"
+    },
+    {
+      "proName": "NASDAQ:MSFT",
+      "title": "MSFT"
+    },
+    {
+      "proName": "NASDAQ:AAPL",
+      "title": "AAPL"
+    },
+    {
+      "proName": "NASDAQ:AMZN",
+      "title": "AMZN"
+    },
+    {
+      "proName": "NASDAQ:META",
+      "title": "META"
+    },
+    {
+      "proName": "NASDAQ:AVGO",
+      "title": "AVGO"
+    },
+    {
+      "proName": "NASDAQ:GOOGL",
+      "title": "GOOGL"
+    },
+    {
+      "proName": "NASDAQ:GOOG",
+      "title": "GOOG"
+    },
+    {
+      "proName": "NYSE:BRK.B",
+      "title": "BRK.B"
+    },
+    {
+      "proName": "NASDAQ:TSLA",
+      "title": "TSLA"
+    },
+    {
+      "proName": "BINANCE:BTCUSDT",
+      "title": "BTCUSDT"
+    },
+    {
+      "proName": "BINANCE:ETHUSDT",
+      "title": "ETHUSDT"
+    },
+    {
+      "proName": "BINANCE:BNBUSDT",
+      "title": "BNBUSDT"
+    },
+    {
+      "proName": "BINANCE:SOLUSDT",
+      "title": "SOLUSDT"
+    },
+    {
+      "proName": "KRAKEN:USDTUSD",
+      "title": "USDTUSD"
+    }
+  ],
+  "showSymbolLogo": true,
+  "isTransparent": false,
+  "displayMode": "adaptive",
+  "colorTheme": "light",
+  "locale": "en"
+};
+      script.innerHTML = JSON.stringify(cfg, null, 2);
+      tickerHost.querySelector('.tradingview-widget-container').appendChild(script);
+    }
+
+    // ===== Advanced chart =====
     const advHost = document.getElementById('adv-host');
     const advSelect = document.getElementById('advSym');
     const intButtons = Array.from(document.querySelectorAll('.btn[data-int]'));
@@ -111,7 +314,7 @@
         interval: advInterval,
         range: advRange,
         timezone: 'Etc/UTC',
-        theme: 'light',
+        theme: theme,
         style: '1',
         locale: 'en',
         allow_symbol_change: false,
@@ -127,6 +330,7 @@
       advHost.querySelector('.tradingview-widget-container').appendChild(script);
     }
 
+    // Interval buttons
     intButtons.forEach(btn => btn.addEventListener('click', () => {
       intButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -134,6 +338,7 @@
       renderAdvanced();
     }));
 
+    // Range buttons
     rangeButtons.forEach(btn => btn.addEventListener('click', () => {
       rangeButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -143,6 +348,8 @@
 
     advSelect.addEventListener('change', () => { advSymbol = advSelect.value; renderAdvanced(); });
 
+    // Initial render
+    renderTicker();
     renderAdvanced();
   </script>
 </body>
