@@ -33,7 +33,7 @@
     .layout.list-collapsed { grid-template-columns:1fr; }
     .list { border:1px solid var(--border); border-radius:12px; background:var(--card); }
     .list-header { display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--border); justify-content:space-between; }
-    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; }
+    .icon-btn { appearance:none; border:1px solid var(--border); background:var(--card); color:var(--text); width:36px; height:36px; border-radius:8px; cursor:pointer; font-weight:800; line-height:1; display:none; }
     .row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--border); cursor:pointer; }
     .row:hover { background: rgba(15, 98, 254, .08); }
     .left { display:flex; flex-direction:column; gap:3px; }
@@ -45,7 +45,7 @@
     .star { font-size:18px; margin-left:8px; user-select:none; }
     .bell { font-size:18px; margin-left:8px; user-select:none; }
     .plus { font-size:20px; margin-left:8px; user-select:none; }
-    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); right:8px; display:none; }
+    .floating-btn { position: fixed; top: 50%; transform: translateY(-50%); z-index: 50; width:40px; height:40px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; font-weight: 900; box-shadow: 0 1px 2px rgba(0,0,0,.12); right:10px; display:block; }
     @media (max-width: 1080px) { .layout { grid-template-columns:1fr; } .toolbar .search { flex:1 1 100%; order:-1; } }
   </style>
 </head>
@@ -60,7 +60,7 @@
       <div id="helpPopover" class="card" style="position:absolute; right:16px; top:52px; display:none; width:360px;">
         <h4 style="margin:6px 0 10px;">Quick tips</h4>
         <ul style="margin:0 0 6px 18px;">
-          <li>Use <b>☰</b> to hide/show the left list.</li>
+          <li>Use <b>☰</b> (right side) to hide/show the left list.</li>
           <li>Tabs: first row = Asset class; second row = Group.</li>
           <li>Search (left) finds symbols across all categories.</li>
           <li><b>＋</b> adds to your custom watchlists; <b>🔔</b> sets alerts.</li>
@@ -80,7 +80,7 @@
       <div id="ticker-host"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div></div></div>
     </div>
 
-    <!-- Toolbar: smaller search + tabs (text only) -->
+    <!-- Toolbar -->
     <div class="toolbar" id="assetToolbar">
       <div class="search"><input id="searchTop" type="text" placeholder="Search (e.g., SOLUSDT, VT, EURCHF)"/></div>
       <div class="tabs-wrap">
@@ -128,7 +128,8 @@
       </section>
     </div>
 
-    <button id="listShowFloating" class="floating-btn" title="Show list">☰</button>
+    <!-- Right-edge toggle -->
+    <button id="listRightToggle" class="floating-btn" title="Hide list">☰</button>
   </main>
 
   <!-- Settings Modal -->
@@ -223,7 +224,7 @@
   "colorTheme": "dark",
   "locale": "en"
 } };
-  const CATALOG_BASE = {"favorites": {"label": "Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "mylists": {"label": "My Lists", "groups": {}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume (Binance)", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:XRPUSDT", "d": "XRPUSDT \u2014 XRP"}, {"s": "BINANCE:DOGEUSDT", "d": "DOGEUSDT \u2014 Dogecoin"}, {"s": "BINANCE:TONUSDT", "d": "TONUSDT \u2014 Toncoin"}, {"s": "BINANCE:ADAUSDT", "d": "ADAUSDT \u2014 Cardano"}, {"s": "BINANCE:TRXUSDT", "d": "TRXUSDT \u2014 TRON"}, {"s": "BINANCE:AVAXUSDT", "d": "AVAXUSDT \u2014 Avalanche"}, {"s": "BINANCE:LINKUSDT", "d": "LINKUSDT \u2014 Chainlink"}, {"s": "BINANCE:LTCUSDT", "d": "LTCUSDT \u2014 Litecoin"}, {"s": "BINANCE:SHIBUSDT", "d": "SHIBUSDT \u2014 Shiba Inu"}, {"s": "BINANCE:NEARUSDT", "d": "NEARUSDT \u2014 NEAR"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "fx": {"label": "FX", "groups": {"majors_chf": {"label": "Majors & CHF", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures"}]}}}};
+  const CATALOG_BASE = {"favorites": {"label": "Favorites", "groups": {"my_favs": {"label": "My Favorites", "symbols": []}}}, "mylists": {"label": "My Lists", "groups": {}}, "equities": {"label": "Stocks", "groups": {"us_top": {"label": "US Top", "symbols": [{"s": "NASDAQ:NVDA", "d": "NVDA \u2014 NVIDIA"}, {"s": "NASDAQ:MSFT", "d": "MSFT \u2014 Microsoft"}, {"s": "NASDAQ:AAPL", "d": "AAPL \u2014 Apple"}, {"s": "NASDAQ:AMZN", "d": "AMZN \u2014 Amazon"}, {"s": "NASDAQ:META", "d": "META \u2014 Meta"}, {"s": "NASDAQ:AVGO", "d": "AVGO \u2014 Broadcom"}, {"s": "NASDAQ:GOOGL", "d": "GOOGL \u2014 Alphabet A"}, {"s": "NYSE:BRK.B", "d": "BRK.B \u2014 Berkshire B"}, {"s": "NASDAQ:TSLA", "d": "TSLA \u2014 Tesla"}, {"s": "NYSE:LLY", "d": "LLY \u2014 Eli Lilly"}]}, "ch_six": {"label": "Switzerland (SIX)", "symbols": [{"s": "SIX:NESN", "d": "NESN \u2014 Nestl\u00e9"}, {"s": "SIX:ROG", "d": "ROG \u2014 Roche Holding"}, {"s": "SIX:NOVN", "d": "NOVN \u2014 Novartis"}, {"s": "SIX:UBSG", "d": "UBSG \u2014 UBS Group"}, {"s": "SIX:ABBN", "d": "ABBN \u2014 ABB"}, {"s": "SIX:ZURN", "d": "ZURN \u2014 Zurich Insurance"}]}}}, "crypto": {"label": "Crypto", "groups": {"top_volume": {"label": "Top by Volume (Binance)", "symbols": [{"s": "BINANCE:BTCUSDT", "d": "BTCUSDT \u2014 Bitcoin"}, {"s": "BINANCE:ETHUSDT", "d": "ETHUSDT \u2014 Ethereum"}, {"s": "BINANCE:SOLUSDT", "d": "SOLUSDT \u2014 Solana"}, {"s": "BINANCE:BNBUSDT", "d": "BNBUSDT \u2014 BNB"}, {"s": "BINANCE:XRPUSDT", "d": "XRPUSDT \u2014 XRP"}, {"s": "BINANCE:DOGEUSDT", "d": "DOGEUSDT \u2014 Dogecoin"}, {"s": "BINANCE:TONUSDT", "d": "TONUSDT \u2014 Toncoin"}, {"s": "BINANCE:ADAUSDT", "d": "ADAUSDT \u2014 Cardano"}, {"s": "BINANCE:TRXUSDT", "d": "TRXUSDT \u2014 TRON"}, {"s": "BINANCE:AVAXUSDT", "d": "AVAXUSDT \u2014 Avalanche"}, {"s": "BINANCE:LINKUSDT", "d": "LINKUSDT \u2014 Chainlink"}, {"s": "BINANCE:LTCUSDT", "d": "LTCUSDT \u2014 Litecoin"}, {"s": "BINANCE:SHIBUSDT", "d": "SHIBUSDT \u2014 Shiba Inu"}, {"s": "BINANCE:NEARUSDT", "d": "NEARUSDT \u2014 NEAR"}]}}}, "etfs": {"label": "ETFs", "groups": {"core_us": {"label": "Core US", "symbols": [{"s": "AMEX:SPY", "d": "SPY \u2014 SPDR S&P 500"}, {"s": "AMEX:VOO", "d": "VOO \u2014 Vanguard S&P 500"}, {"s": "NASDAQ:QQQ", "d": "QQQ \u2014 Invesco QQQ"}, {"s": "AMEX:VTI", "d": "VTI \u2014 Vanguard Total Market"}, {"s": "AMEX:VT", "d": "VT \u2014 Vanguard Total World Stock"}]}, "ucits_eu": {"label": "UCITS (EU/UK)", "symbols": [{"s": "XETR:EUNL", "d": "EUNL \u2014 iShares Core MSCI World UCITS"}, {"s": "XETR:SXR8", "d": "SXR8 \u2014 iShares Core S&P 500 UCITS (Acc)"}, {"s": "LSE:VWRL", "d": "VWRL \u2014 Vanguard FTSE All-World UCITS"}]}}}, "fx": {"label": "FX", "groups": {"majors_chf": {"label": "Majors & CHF", "symbols": [{"s": "OANDA:EURUSD", "d": "EURUSD \u2014 Euro / US Dollar"}, {"s": "OANDA:USDCHF", "d": "USDCHF \u2014 US Dollar / Swiss Franc"}, {"s": "OANDA:EURCHF", "d": "EURCHF \u2014 Euro / Swiss Franc"}]}}}, "commodities": {"label": "Commodities", "groups": {"energy": {"label": "Energy", "symbols": [{"s": "NYMEX:CL1!", "d": "CL1! \u2014 Crude Oil WTI"}, {"s": "NYMEX:NG1!", "d": "NG1! \u2014 Natural Gas"}]}, "precious": {"label": "Precious Metals", "symbols": [{"s": "COMEX:GC1!", "d": "GC1! \u2014 Gold Futures"}, {"s": "COMEX:SI1!", "d": "SI1! \u2014 Silver Futures"}]}, "agriculture": {"label": "Agriculture", "symbols": [{"s": "CBOT:ZC1!", "d": "ZC1! \u2014 Corn (CBOT)"}, {"s": "CBOT:ZW1!", "d": "ZW1! \u2014 Wheat (CBOT)"}, {"s": "CBOT:ZS1!", "d": "ZS1! \u2014 Soybeans (CBOT)"}, {"s": "ICEUS:KC1!", "d": "KC1! \u2014 Coffee (ICE US)"}, {"s": "ICEUS:SB1!", "d": "SB1! \u2014 Sugar No.11 (ICE US)"}, {"s": "ICEUS:CC1!", "d": "CC1! \u2014 Cocoa (ICE US)"}]}, "base_metals": {"label": "Base Metals", "symbols": [{"s": "TVC:ALUMINUM", "d": "ALUMINUM \u2014 Aluminum (CFD)"}, {"s": "TVC:NICKEL", "d": "NICKEL \u2014 Nickel (CFD)"}, {"s": "TVC:ZINC", "d": "ZINC \u2014 Zinc (CFD)"}, {"s": "COMEX:HG1!", "d": "HG1! \u2014 Copper (COMEX)"}]}}}};
 
   function safeJSON(s) { try { return JSON.parse(s||''); } catch(e) { return null; } }
 
@@ -325,7 +326,6 @@
     store.mylists[id] = { label: name, symbols: [] };
     localStorage.setItem('mylists', JSON.stringify(store.mylists));
     CATALOG = buildCatalog();
-    // Ensure asset is mylists and select new group
     store.asset='mylists'; store.group=id; localStorage.setItem('asset','mylists'); localStorage.setItem('group', id);
     renderAssetTabs(); renderGroupTabs(); renderList();
   });
@@ -334,20 +334,28 @@
 
   // ====== Layout (list collapse) ======
   const gridLayout = document.getElementById('gridLayout');
+  const listRightToggle = document.getElementById('listRightToggle');
   const listToggle = document.getElementById('listToggle');
-  const listShowFloating = document.getElementById('listShowFloating');
   function applyLayout(){
     gridLayout.classList.toggle('list-collapsed', store.listCollapsed);
-    listShowFloating.style.display = store.listCollapsed ? 'block' : 'none';
-    listToggle.title = store.listCollapsed ? 'Show list' : 'Hide list';
+    listRightToggle.title = store.listCollapsed ? 'Show list' : 'Hide list';
   }
   applyLayout();
-  listToggle.addEventListener('click', ()=>{ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); });
-  listShowFloating.addEventListener('click', ()=>{ store.listCollapsed=false; localStorage.setItem('listCollapsed', 'false'); applyLayout(); setTimeout(renderAdvanced,60); });
+  function toggleList(){ store.listCollapsed=!store.listCollapsed; localStorage.setItem('listCollapsed', store.listCollapsed); applyLayout(); setTimeout(renderAdvanced,60); }
+  listRightToggle.addEventListener('click', toggleList);
+  listToggle.addEventListener('click', toggleList);
 
   // ====== List + search ======
   const listTitle=document.getElementById('listTitle'); const countPill=document.getElementById('countPill'); const listHost=document.getElementById('symbolList');
-  function getAllSymbols(){ const arr=[]; Object.values(CATALOG).forEach(asset=>{ Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d}))); }); const seen=new Set(); return arr.filter(x=> seen.has(x.s)?false:(seen.add(x.s),true)); }
+  function getAllSymbols(){
+    const arr=[];
+    Object.values(CATALOG).forEach(asset=>{
+      Object.values(asset.groups).forEach(g=> g.symbols.forEach(x=>arr.push({s:x.s,d:x.d})));
+    });
+    const seen=new Set(); const uniq=[];
+    arr.forEach(x=>{ if(!seen.has(x.s)){ seen.add(x.s); uniq.push(x); } });
+    return uniq;
+  }
   let ALL_SYMBOLS = getAllSymbols();
 
   function getGroupSymbols(){ if(store.asset==='favorites') return store.favorites; if(store.asset==='mylists') return (store.mylists[store.group]?.symbols)||[]; return (CATALOG[store.asset]?.groups[store.group]?.symbols)||[]; }
@@ -485,7 +493,7 @@
   setInterval(pollAlerts, Math.max(10, store.pollSec)*1000);
 
   // ====== Toast helper ======
-  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color='#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
+  function toast(msg){ const t=document.createElement('div'); t.style.position='fixed'; t.style.left='50%'; t.style.transform='translateX(-50%)'; t.style.bottom='18px'; t.style.background='#111827'; t.style.color:'#f9fafb'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='0 6px 24px rgba(0,0,0,.18)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity 300ms'; },1600); setTimeout(()=>{ t.remove(); },2000); }
 </script>
 <script>
   // Advanced chart loader (ensures DOM is ready)
